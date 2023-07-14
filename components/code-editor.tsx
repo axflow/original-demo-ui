@@ -18,7 +18,7 @@ export default function CodeEditor(props: PropsType) {
       : lightTheme.colors['editor.background'];
 
   return (
-    <div className={`py-3 rounded-lg`} style={{ backgroundColor: bgColor }}>
+    <div className={`rounded-lg py-3`} style={{ backgroundColor: bgColor }}>
       <MonacoEditor
         language="javascript"
         theme={theme}

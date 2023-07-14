@@ -1,18 +1,17 @@
-export type SiteConfig = typeof siteConfig
+export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Next.js",
-  description:
-    "Beautifully designed components built with Radix UI and Tailwind CSS.",
+  name: 'Axilla Demo',
+  description: 'Ingestion, query & retrieval playground for the Axilla SDK.',
   mainNav: [
     {
-      title: "Home",
-      href: "/",
+      title: 'Home',
+      href: '/',
     },
   ],
   links: {
-    twitter: "https://twitter.com/shadcn",
-    github: "https://github.com/shadcn/ui",
-    docs: "https://ui.shadcn.com",
+    twitter: 'https://twitter.com/axilla_io',
+    github: 'https://github.com/axilla-io',
+    docs: 'https://docs.axilla.io',
   },
-}
+};

@@ -54,19 +54,19 @@ function CellInner(props: CellInnerPropsType) {
     <div className="flex flex-col">
       <div className="my-2">
         <span
-          className="cursor-pointer flex items-center font-semibold"
+          className="flex cursor-pointer items-center font-semibold"
           onClick={() => {
             props.evaluate(code);
           }}
         >
-          <Icons.playCircle className="h-5 w-5 mr-1" /> Evaluate
+          <Icons.playCircle className="mr-1 h-5 w-5" /> Evaluate
         </span>
       </div>
       <CodeEditor code={code} onChange={setCode} />
       {props.evalCount > 0 && (
-        <div className="my-2 border rounded-lg border-zinc-300 text-sm">
+        <div className="my-2 rounded-lg border border-zinc-300 text-sm">
           {props.stdout.length > 0 && (
-            <pre className="p-4 border-b border-zinc-300">
+            <pre className="border-b border-zinc-300 p-4">
               <code className="block">{props.stdout.join('\n')}</code>
             </pre>
           )}
