@@ -1,21 +1,21 @@
-# next-template
+# Axilla demo UI
 
-A Next.js 13 template for building apps with Radix UI and Tailwind CSS.
+This was built from a template `npx create-next-app -e https://github.com/shadcn/next-template`.
+It leverages radix UI, nextJS 13, tailwindCSS
 
 ## Usage
 
-```bash
-npx create-next-app -e https://github.com/shadcn/next-template
+You'll probably need to init shadcn:
+
+```
+npx shadcn-ui@latest init
 ```
 
-## Features
+## Add a shadcn UI component
 
-- Next.js 13 App Directory
-- Radix UI Primitives
-- Tailwind CSS
-- Icons from [Lucide](https://lucide.dev)
-- Dark mode with `next-themes`
-- Tailwind CSS class sorting, merging and linting.
+```
+npx shadcn-ui@latest add button
+```
 
 ## License
 

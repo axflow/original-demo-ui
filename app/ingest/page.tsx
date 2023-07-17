@@ -15,6 +15,16 @@ export default function IndexPage() {
       <div className="mt-4 w-[700px]">
         <Cell />
       </div>
+      {Array.from(Array(10).keys()).map((i: number) => {
+        return (
+          <div
+            key={i}
+            className="flex h-36 w-full items-center justify-center rounded-full bg-gray-100 text-gray-500"
+          >
+            <p>Content {i}</p>
+          </div>
+        );
+      })}
     </section>
   );
 }
