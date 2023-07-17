@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { SiteHeader } from '@/components/site-header';
 import { ThemeProvider } from '@/components/theme-provider';
 import Sidebar from './sidebar';
+import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: {
@@ -43,13 +44,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
                   <Sidebar />
                 </div>
                 <div className="flex flex-1 flex-col">
-                  <div className="flex h-16 bg-gray-300">
-                    <SiteHeader />
-                  </div>
                   <div className="paragraph flex flex-1 overflow-y-auto px-4">{children}</div>
+                  <Toaster />
                 </div>
               </div>
-              <div className="flex">Footer</div>
             </main>
           </ThemeProvider>
         </body>
