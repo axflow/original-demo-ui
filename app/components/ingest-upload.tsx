@@ -1,3 +1,4 @@
+'use client';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -19,20 +20,27 @@ export function IngestDocumentUpload() {
     let formData = new FormData();
     formData.append('file', firstDoc);
 
-    const response = await window.fetch('/api/upload', {
+    const response = await window.fetch('/api/ingest/upload', {
       method: 'POST',
       headers: {
         'content-type': 'application/json;charset=UTF-8',
       },
       body: formData,
     });
-    // TODO: ingest this into the vector store
     const responseData = await response.json();
-    console.log(responseData.content.slice(1, 300), '...');
-    toast({
-      title: `Uploaded file`,
-      description: <p>{firstDoc.name}</p>,
-    });
+
+    if (responseData.error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error ingesting',
+        description: <p>{responseData.error}</p>,
+      });
+    } else {
+      toast({
+        title: `Uploaded file`,
+        description: <p>{firstDoc.name}</p>,
+      });
+    }
   };
 
   const validateFile = (file: FileList) => {

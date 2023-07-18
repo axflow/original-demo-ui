@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ingestFile } from '@/lib/ingest';
 
-// Parse the uploaded file into chunks. Join them, and return them to the client
-// TODO: do we need a server hop for this? Prob not unless we're uploading to the vector store
+// Parse the uploaded file into chunks.
+// Join them, and ingest them into the vector store.
 export async function POST(request: NextRequest) {
   const stream = request.body!;
   let decoder = new TextDecoder('utf-8');
@@ -29,9 +30,10 @@ export async function POST(request: NextRequest) {
 
   try {
     const fileContent = removeBoundaries(content);
+    await ingestFile(content, 'fake/url/for/now');
     return NextResponse.json({ content: fileContent }, { status: 200 });
   } catch {
-    return NextResponse.json({ error: 'Error reading file' }, { status: 400 });
+    return NextResponse.json({ error: 'Error ingesting file' }, { status: 400 });
   }
 }
 

@@ -1,3 +1,4 @@
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -24,11 +25,29 @@ export function IngestWikipedia() {
     resolver: zodResolver(WikipediaFormSchema),
     defaultValues: { term: 'San Francisco' },
   });
-  function onSubmitWikipedia(data: z.infer<typeof WikipediaFormSchema>) {
-    toast({
-      title: 'Ingestion wikipedia term',
-      description: <p>{data.term}</p>,
+  async function onSubmitWikipedia(data: z.infer<typeof WikipediaFormSchema>) {
+    const response = await fetch('/api/ingest/wikipedia', {
+      method: 'POST',
+      headers: { 'Content-type': 'application/json' },
+      body: JSON.stringify({ term: data.term }),
     });
+    const json = await response.json();
+    if (json.error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error ingesting',
+        description: <p>{json.error}</p>,
+      });
+    } else {
+      toast({
+        title: 'Ingestion wikipedia term',
+        description: (
+          <p>
+            {data.term}. Response: {json.term}{' '}
+          </p>
+        ),
+      });
+    }
   }
 
   return (

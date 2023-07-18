@@ -1,6 +1,6 @@
 'use client';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,7 +26,9 @@ import { IngestDocumentUpload } from '@/app/components/ingest-upload';
 function IngestTab() {
   const router = useRouter();
   const pathname = usePathname();
-  router.push(pathname + '?tab=ingest');
+  useEffect(() => {
+    router.push(pathname + '?tab=ingest');
+  }, [router, pathname]);
 
   return (
     <div className="flex flex-col items-center">
@@ -56,7 +58,10 @@ function IngestTab() {
 function QueryTab() {
   const router = useRouter();
   const pathname = usePathname();
-  router.push(pathname + '?tab=query');
+  useEffect(() => {
+    router.push(pathname + '?tab=query');
+  }, [router, pathname]);
+
   const [response, setResponse] = useState<string>('');
 
   const QuerySchema = z.object({
@@ -140,7 +145,7 @@ function QueryTab() {
           </Form>
 
           <Label>Response</Label>
-          <Textarea placeholder="" value={response} />
+          <Textarea defaultValue={response} />
         </div>
       </section>
     </div>
