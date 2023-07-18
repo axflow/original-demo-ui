@@ -1,4 +1,5 @@
 'use client';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -149,6 +150,10 @@ function IngestDocumentUpload() {
 }
 
 function IngestTab() {
+  const router = useRouter();
+  const pathname = usePathname();
+  router.push(pathname + '?tab=ingest');
+
   return (
     <div className="flex flex-col items-center">
       <section className="my-8 flex flex-col items-center">
@@ -175,6 +180,9 @@ function IngestTab() {
 }
 
 function QueryTab() {
+  const router = useRouter();
+  const pathname = usePathname();
+  router.push(pathname + '?tab=query');
   const [response, setResponse] = useState<string>('');
   const QuerySchema = z.object({
     prompt: z
@@ -196,73 +204,78 @@ function QueryTab() {
     setResponse('The response would appear here...');
   }
   return (
-    <section className="my-8 flex w-full flex-col items-center">
-      <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-        Ask a question
-      </h1>
-      <div className="w-3/4">
-        <Form {...queryForm}>
-          <form onSubmit={queryForm.handleSubmit(onSubmit)}>
-            <FormField
-              control={queryForm.control}
-              name="prompt"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="mt-4 flex flex-col gap-2">
-                    <FormLabel className="min-w-fit">Question</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Ask your data a question" {...field} />
-                    </FormControl>
-                  </div>
-                  <FormDescription>
-                    Ask a question, the data uploaded will be used to answer.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <div className="flex flex-col items-center">
+      <section className="my-8 flex w-full flex-col items-center">
+        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
+          Ask a question
+        </h1>
+        <div className="w-3/4">
+          <Form {...queryForm}>
+            <form onSubmit={queryForm.handleSubmit(onSubmit)}>
+              <FormField
+                control={queryForm.control}
+                name="prompt"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="mt-4 flex flex-col gap-2">
+                      <FormLabel className="min-w-fit">Question</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Ask your data a question" {...field} />
+                      </FormControl>
+                    </div>
+                    <FormDescription>
+                      Ask a question, the data uploaded will be used to answer.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={queryForm.control}
-              name="filter"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="mt-4 flex flex-col gap-2">
-                    <FormLabel className="min-w-fit">Filter term</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Filter a document name (like 'San Francisco')"
-                        {...field}
-                      />
-                    </FormControl>
-                  </div>
-                  <FormDescription>
-                    Only fetch documents with a specific wikipedia term.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={queryForm.control}
+                name="filter"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="mt-4 flex flex-col gap-2">
+                      <FormLabel className="min-w-fit">Filter term</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Filter a document name (like 'San Francisco')"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormDescription>
+                      Only fetch documents with a specific wikipedia term.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className="mt-4 flex items-center justify-center">
-              <Button type="submit" className="mt-4">
-                Query
-              </Button>
-            </div>
-          </form>
-        </Form>
+              <div className="mt-4 flex items-center justify-center">
+                <Button type="submit" className="mt-4">
+                  Query
+                </Button>
+              </div>
+            </form>
+          </Form>
 
-        <Label>Response</Label>
-        <Textarea placeholder="" value={response} />
-      </div>
-    </section>
+          <Label>Response</Label>
+          <Textarea placeholder="" value={response} />
+        </div>
+      </section>
+    </div>
   );
 }
 export default function IndexPage() {
+  const searchParams = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'ingest';
+
   return (
     <section className="flex w-full flex-col items-center gap-6">
-      <Tabs defaultValue="ingest" className="m-4 w-full">
+      <Tabs defaultValue={defaultTab} className="m-4 w-full">
         <div className="flex items-center justify-center">
           <TabsList>
             <TabsTrigger value="ingest">Ingest documents</TabsTrigger>
