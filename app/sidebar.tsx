@@ -22,9 +22,10 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 import { toast } from '@/components/ui/use-toast';
 
-export function ModelConfigForm() {
+export function QueryConfigForm() {
   const FormSchema = z.object({
     model: z.string({
       required_error: 'Please select a model.',
@@ -34,12 +35,14 @@ export function ModelConfigForm() {
         required_error: 'Please select a topK value.',
       })
       .max(10, { message: 'TopK value must be less than 10.' }),
+    temperature: z.number().min(0).max(1),
   });
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       topK: 3,
       model: 'gpt-4',
+      temperature: 0,
     },
   });
 
@@ -95,6 +98,29 @@ export function ModelConfigForm() {
               <FormMessage />
               <FormDescription>
                 The number of document chunks that will be added to the context at query time.
+              </FormDescription>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="temperature"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Temperature: {field.value}</FormLabel>
+              <FormControl>
+                <Slider
+                  defaultValue={[0]}
+                  max={1}
+                  step={0.1}
+                  onValueChange={(e) => field.onChange(e[0])}
+                />
+              </FormControl>
+              <FormMessage />
+              <FormDescription>
+                Controls randomness: lowering results in less random completions. As the temperature
+                approaches zero, the model will become deterministic and repetitive.
               </FormDescription>
             </FormItem>
           )}
@@ -233,7 +259,7 @@ export default function Sidebar() {
         <Separator className="mb-2" />
 
         <div className="p-4">
-          <ModelConfigForm />
+          <QueryConfigForm />
         </div>
         <Separator className="my-2" />
         <h1 className="flex h-16 flex-col items-center justify-center text-2xl font-extrabold">
