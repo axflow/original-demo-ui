@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import {
   Form,
@@ -20,134 +20,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
-
-function IngestWikipedia() {
-  const WikipediaFormSchema = z.object({
-    term: z.string({
-      required_error: 'Please select a term to search wikipedia for',
-    }),
-  });
-  const wikipediaForm = useForm<z.infer<typeof WikipediaFormSchema>>({
-    resolver: zodResolver(WikipediaFormSchema),
-    defaultValues: { term: 'San Francisco' },
-  });
-  function onSubmitWikipedia(data: z.infer<typeof WikipediaFormSchema>) {
-    toast({
-      title: 'Ingestion wikipedia term',
-      description: <p>{data.term}</p>,
-    });
-  }
-
-  return (
-    <div className="max-w-xl">
-      <Form {...wikipediaForm}>
-        <form onSubmit={wikipediaForm.handleSubmit(onSubmitWikipedia)}>
-          <FormField
-            control={wikipediaForm.control}
-            name="term"
-            render={({ field }) => (
-              <FormItem>
-                <div className="mt-4 flex items-center gap-2">
-                  <FormLabel className="min-w-fit">wikipedia term</FormLabel>
-                  <FormControl>
-                    <Input type="string" {...field} />
-                  </FormControl>
-                </div>
-                <FormDescription>
-                  Specify a wikipedia term and we will automatically fetch and ingest it into the
-                  configured store.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="mt-4 flex items-center justify-center">
-            <Button type="submit" className="mt-4">
-              Ingest
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
-  );
-}
-
-function IngestDocumentUpload() {
-  interface IFormInput {
-    document: FileList;
-  }
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IFormInput>();
-
-  const onUpload: SubmitHandler<IFormInput> = async (data) => {
-    const firstDoc = data.document[0];
-    let formData = new FormData();
-    formData.append('file', firstDoc);
-
-    const response = await window.fetch('/api/upload', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json;charset=UTF-8',
-      },
-      body: formData,
-    });
-    // TODO: ingest this into the vector store
-    const responseData = await response.json();
-    console.log(responseData.content.slice(1, 300), '...');
-    toast({
-      title: `Uploaded file`,
-      description: <p>{firstDoc.name}</p>,
-    });
-  };
-
-  const validateFile = (file: FileList) => {
-    if (file.length !== 1) {
-      return false;
-    }
-
-    const filename = file[0].name;
-    if (!filename.endsWith('.md') && !filename.endsWith('.mdx')) {
-      return false;
-    }
-    return true;
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onUpload)}>
-      <div className="flex flex-col">
-        <div className="mt-4 flex items-center gap-2">
-          <Label className="min-w-fit" htmlFor="document">
-            Upload document
-          </Label>
-          <Input
-            {...register('document', { required: true, validate: validateFile })}
-            type="file"
-            className="file:rounded file:bg-input hover:file:cursor-pointer file:hover:bg-accent"
-          />
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          We currently only support markdown files (.md)
-        </p>
-        {errors.document?.type === 'required' && (
-          <p className="text-sm text-destructive">This field is required</p>
-        )}
-        {errors.document?.type === 'validate' && (
-          <p className="text-sm text-destructive">Please upload a markdown file</p>
-        )}
-      </div>
-
-      <div className="mt-4 flex items-center justify-center">
-        <Button type="submit" className="mt-4" disabled={!!errors.document}>
-          Upload
-        </Button>
-      </div>
-    </form>
-  );
-}
+import { IngestWikipedia } from '@/app/components/ingest-wikipedia';
+import { IngestDocumentUpload } from '@/app/components/ingest-upload';
 
 function IngestTab() {
   const router = useRouter();
@@ -184,6 +58,7 @@ function QueryTab() {
   const pathname = usePathname();
   router.push(pathname + '?tab=query');
   const [response, setResponse] = useState<string>('');
+
   const QuerySchema = z.object({
     prompt: z
       .string({
@@ -193,9 +68,11 @@ function QueryTab() {
       .max(3000, { message: 'The maximum prompt length is 3000 characters.' }),
     filter: z.string().optional(),
   });
+
   const queryForm = useForm<z.infer<typeof QuerySchema>>({
     resolver: zodResolver(QuerySchema),
   });
+
   function onSubmit(data: z.infer<typeof QuerySchema>) {
     toast({
       title: 'Query',
