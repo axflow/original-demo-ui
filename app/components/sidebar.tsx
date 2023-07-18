@@ -28,11 +28,11 @@ import { toast } from '@/components/ui/use-toast';
 export function QueryConfigForm() {
   const FormSchema = z.object({
     model: z.string({
-      required_error: 'Please select a model.',
+      required_error: 'A model is required',
     }),
     topK: z
       .number({
-        required_error: 'Please select a topK value.',
+        required_error: 'Select how many documents should be added to the context.',
       })
       .max(10, { message: 'TopK value must be less than 10.' }),
     temperature: z.number().min(0).max(1),
@@ -65,21 +65,23 @@ export function QueryConfigForm() {
           name="model"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Model</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="model" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="gpt-4">GPT-4</SelectItem>
-                  <SelectItem value="gpt-3.5-turbo">GPT-3.5</SelectItem>
-                  <SelectItem value="claude-v2">Claude V2</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-4">
+                <FormLabel>Model</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="model" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="gpt-4">GPT-4</SelectItem>
+                    <SelectItem value="gpt-3.5-turbo">GPT-3.5</SelectItem>
+                    <SelectItem value="claude-v2">Claude V2</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <FormDescription>
-                The model used for answering the question, given documents.
+                The model used for answering the question, with augmented context.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -91,11 +93,13 @@ export function QueryConfigForm() {
           name="topK"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>top K</FormLabel>
-              <FormControl>
-                <Input type="number" {...field} />
-              </FormControl>
-              <FormMessage />
+              <div className="mt-4 flex items-center gap-4">
+                <FormLabel className="min-w-fit">top K</FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} />
+                </FormControl>
+                <FormMessage />
+              </div>
               <FormDescription>
                 The number of document chunks that will be added to the context at query time.
               </FormDescription>
@@ -107,15 +111,17 @@ export function QueryConfigForm() {
           control={form.control}
           name="temperature"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Temperature: {field.value}</FormLabel>
+            <FormItem className="mt-4">
               <FormControl>
-                <Slider
-                  defaultValue={[0]}
-                  max={1}
-                  step={0.1}
-                  onValueChange={(e) => field.onChange(e[0])}
-                />
+                <div className="flex items-center gap-4">
+                  <FormLabel className="min-w-fit">Temperature: {field.value}</FormLabel>
+                  <Slider
+                    defaultValue={[0]}
+                    max={1}
+                    step={0.1}
+                    onValueChange={(e) => field.onChange(e[0])}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
               <FormDescription>
@@ -126,9 +132,11 @@ export function QueryConfigForm() {
           )}
         />
 
-        <Button type="submit" className="mt-4">
-          Save config
-        </Button>
+        <div className="flex flex-col items-center justify-center">
+          <Button type="submit" className="mt-4">
+            Update config
+          </Button>
+        </div>
       </form>
     </Form>
   );
@@ -178,19 +186,21 @@ export function StoreConfigForm() {
           name="store"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Store</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="store" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="pinecone">pinecone</SelectItem>
-                  <SelectItem value="chroma">chroma</SelectItem>
-                  <SelectItem value="pgvector">pgvector</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex items-center gap-4">
+                <FormLabel>Store</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="store" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="pinecone">pinecone</SelectItem>
+                    <SelectItem value="chroma">chroma</SelectItem>
+                    <SelectItem value="pgvector">pgvector</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <FormDescription>
                 Which store is used for storing document embeddings.
               </FormDescription>
@@ -203,19 +213,21 @@ export function StoreConfigForm() {
           control={form.control}
           name="embeddingModel.name"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Embedding Model</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select an embedding model" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="ada-001">ada-001</SelectItem>
-                  <SelectItem value="ada-002">ada-002</SelectItem>
-                </SelectContent>
-              </Select>
+            <FormItem className="mt-4">
+              <div className="flex items-center gap-4">
+                <FormLabel className="min-w-fit">Embedding Model</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an embedding model" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="ada-001">ada-001</SelectItem>
+                    <SelectItem value="ada-002">ada-002</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <FormDescription>
                 This model is used to embed the documents and the query for similarity search.
               </FormDescription>
@@ -228,19 +240,23 @@ export function StoreConfigForm() {
           control={form.control}
           name="embeddingModel.dimensions"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Dimensions</FormLabel>
-              <FormControl>
-                <Input type="number" {...field} disabled />
-              </FormControl>
+            <FormItem className="mt-4">
+              <div className="flex items-center gap-4">
+                <FormLabel>Dimensions</FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} disabled />
+                </FormControl>
+              </div>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="mt-4">
-          Save config
-        </Button>
+        <div className="flex flex-col items-center">
+          <Button type="submit" className="mt-4">
+            Update config
+          </Button>
+        </div>
       </form>
     </Form>
   );
@@ -250,22 +266,17 @@ export default function Sidebar() {
   return (
     <div
       id="sidebar"
-      className="border-1 sticky top-0 h-screen min-w-[300px] border-r border-border bg-background"
+      className="border-1 top-0 h-screen min-w-[400px] border-r border-border bg-background"
     >
-      <div className="flex flex-col">
-        <h1 className="flex h-16 flex-col items-center justify-center text-2xl font-extrabold">
-          Query config
-        </h1>
-        <Separator className="mb-2" />
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="py-4 text-2xl font-extrabold">Query config</h1>
 
-        <div className="p-4">
+        <div className="px-4">
           <QueryConfigForm />
         </div>
-        <Separator className="my-2" />
-        <h1 className="flex h-16 flex-col items-center justify-center text-2xl font-extrabold">
-          Store config
-        </h1>
-        <div className="p-4">
+        <Separator className="mt-4" />
+        <h1 className="py-4 text-2xl font-extrabold">Store config</h1>
+        <div className="px-4">
           <StoreConfigForm />
         </div>
       </div>

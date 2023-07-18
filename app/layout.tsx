@@ -38,8 +38,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <main className="flex h-screen flex-col">
-              <div className="flex flex-1 overflow-hidden">
-                <div className="flex w-[300px]">
+              <div className="flex flex-1">
+                <div className="flex w-[400px] overflow-y-auto">
                   <Sidebar />
                 </div>
                 <div className="flex flex-1 flex-col">
