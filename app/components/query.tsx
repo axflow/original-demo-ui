@@ -39,7 +39,6 @@ export function QueryWidget() {
   });
 
   async function onSubmit(data: z.infer<typeof QuerySchema>) {
-    console.log('toggleDocuments is', data.includeDocuments);
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({ question: data.prompt, llmOnly: !data.includeDocuments }),

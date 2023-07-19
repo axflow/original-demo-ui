@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { ingestWikipedia } from '@/lib/ingest';
 
 export async function POST(request: NextRequest) {
-  console.log('Hit the POST /ingest/wikipedia route');
   const { term } = await request.json();
   try {
     await ingestWikipedia(term);

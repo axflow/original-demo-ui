@@ -16,7 +16,6 @@ export async function query(question: string, model: string, llmOnly: boolean, t
 }
 
 export const completion = async (query: string, model: string) => {
-  console.log('running completion');
   const completion = new Completion({
     model: new OpenAICompletion({ model: model, max_tokens: 256 }),
     prompt: new BasicPrompt({ template: QUESTION_WITHOUT_CONTEXT }),
@@ -26,7 +25,6 @@ export const completion = async (query: string, model: string) => {
 };
 
 export const rag = async (question: string, model: string, topK: number) => {
-  console.log('running RAG');
   const pinecone = getPineconeStore();
 
   const rag = new RAG({
