@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useConfig } from '@/app/components/config-context';
 import { Separator } from '@/components/ui/separator';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -26,6 +27,8 @@ import { Slider } from '@/components/ui/slider';
 import { toast } from '@/components/ui/use-toast';
 
 export function QueryConfigForm() {
+  const { model, topK, temperature } = useConfig();
+  const { setModel, setTopK, setTemperature } = useConfig();
   const FormSchema = z.object({
     model: z.string({
       required_error: 'A model is required',
@@ -39,14 +42,13 @@ export function QueryConfigForm() {
   });
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      topK: 3,
-      model: 'gpt-4',
-      temperature: 0,
-    },
+    defaultValues: { topK, model, temperature },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    setModel(data.model);
+    setTopK(data.topK);
+    setTemperature(data.temperature);
     toast({
       title: 'You submitted the following values:',
       description: (
@@ -74,9 +76,9 @@ export function QueryConfigForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="gpt-4">GPT-4</SelectItem>
-                    <SelectItem value="gpt-3.5-turbo">GPT-3.5</SelectItem>
-                    <SelectItem value="claude-v2">Claude V2</SelectItem>
+                    <SelectItem value="text-davinci-003">text-davinci-003</SelectItem>
+                    <SelectItem value="text-davinci-002">text-davinci-002</SelectItem>
+                    <SelectItem value="text-davinci-001">text-davinci-001</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -96,7 +98,11 @@ export function QueryConfigForm() {
               <div className="mt-4 flex items-center gap-4">
                 <FormLabel className="min-w-fit">top K</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
                 </FormControl>
                 <FormMessage />
               </div>
@@ -143,11 +149,10 @@ export function QueryConfigForm() {
 }
 
 export function StoreConfigForm() {
-  type SupportedStore = 'chroma' | 'pgvector' | 'pinecone';
-  const [store, setStore] = useState<SupportedStore>('pinecone');
+  const { store, setStore } = useConfig();
 
   const FormSchema = z.object({
-    store: z.enum(['chroma', 'pgvector', 'pinecone'], {
+    store: z.enum(['chroma', 'pinecone'], {
       required_error: 'Please select a supported store',
     }),
     embeddingModel: z.object({
@@ -162,12 +167,14 @@ export function StoreConfigForm() {
     defaultValues: {
       store: 'pinecone',
       embeddingModel: {
+        name: 'text-embedding-ada-002',
         dimensions: 1536,
       },
     },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    setStore(data.store);
     toast({
       title: 'You submitted the following values:',
       description: (
@@ -197,7 +204,6 @@ export function StoreConfigForm() {
                   <SelectContent>
                     <SelectItem value="pinecone">pinecone</SelectItem>
                     <SelectItem value="chroma">chroma</SelectItem>
-                    <SelectItem value="pgvector">pgvector</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -223,8 +229,8 @@ export function StoreConfigForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="ada-001">ada-001</SelectItem>
-                    <SelectItem value="ada-002">ada-002</SelectItem>
+                    <SelectItem value="text-embedding-ada-002">text-embedding-ada-002</SelectItem>
+                    <SelectItem value="text-similarity-*-001">text-similarity-*-001</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

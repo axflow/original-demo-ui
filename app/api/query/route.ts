@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/query';
 
 export async function POST(request: NextRequest) {
-  const { question, llmOnly } = await request.json();
-  // TODO parameterize these!
-  const topK = 3;
-  const model = 'text-davinci-003';
+  const { question, llmOnly, topK, model } = await request.json();
+  // TODO pass temperature through
   try {
     const response = await query(question, model, llmOnly, topK);
     return NextResponse.json({ response }, { status: 200 });

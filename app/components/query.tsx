@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useConfig } from '@/app/components/config-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -21,6 +22,7 @@ import { toast } from '@/components/ui/use-toast';
 export function QueryWidget() {
   const [response, setResponse] = useState<string>('');
   const [querying, setQuerying] = useState<boolean>(false);
+  const { topK, temperature, model } = useConfig();
 
   const QuerySchema = z.object({
     prompt: z
@@ -43,7 +45,13 @@ export function QueryWidget() {
     setQuerying(true);
     const res = await fetch('/api/query', {
       method: 'POST',
-      body: JSON.stringify({ question: data.prompt, llmOnly: !data.includeDocuments }),
+      body: JSON.stringify({
+        question: data.prompt,
+        llmOnly: !data.includeDocuments,
+        topK,
+        temperature,
+        model,
+      }),
     });
     const json = await res.json();
     if (json.error) {
