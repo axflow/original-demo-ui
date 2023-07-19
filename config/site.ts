@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: 'Axilla Demo',
+  name: 'axgen demo',
   description: 'Ingestion, query & retrieval playground for the Axilla SDK.',
   mainNav: [
     {
@@ -11,7 +11,7 @@ export const siteConfig = {
   ],
   links: {
     twitter: 'https://twitter.com/axilla_io',
-    github: 'https://github.com/axilla-io',
+    github: 'https://github.com/axilla-io/axgen',
     docs: 'https://docs.axilla.io',
   },
 };

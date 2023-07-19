@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -6,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 
 export function IngestDocumentUpload() {
+  const [ingesting, setIngesting] = useState(false);
   interface IFormInput {
     document: FileList;
   }
@@ -16,6 +18,8 @@ export function IngestDocumentUpload() {
   } = useForm<IFormInput>();
 
   const onUpload: SubmitHandler<IFormInput> = async (data) => {
+    setIngesting(true);
+
     const firstDoc = data.document[0];
     let formData = new FormData();
     formData.append('file', firstDoc);
@@ -41,6 +45,7 @@ export function IngestDocumentUpload() {
         description: <p>{firstDoc.name}</p>,
       });
     }
+    setIngesting(false);
   };
 
   const validateFile = (file: FileList) => {
@@ -80,8 +85,8 @@ export function IngestDocumentUpload() {
       </div>
 
       <div className="mt-4 flex items-center justify-center">
-        <Button type="submit" className="mt-4" disabled={!!errors.document}>
-          Upload
+        <Button type="submit" className="mt-4" disabled={!!errors.document || ingesting}>
+          {ingesting ? 'Ingesting' : 'Upload'}
         </Button>
       </div>
     </form>

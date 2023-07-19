@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -16,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
 export function IngestWikipedia() {
+  const [loading, setLoading] = useState<boolean>(false);
   const WikipediaFormSchema = z.object({
     term: z.string({
       required_error: 'Please select a term to search wikipedia for',
@@ -26,6 +28,7 @@ export function IngestWikipedia() {
     defaultValues: { term: 'San Francisco' },
   });
   async function onSubmitWikipedia(data: z.infer<typeof WikipediaFormSchema>) {
+    setLoading(true);
     const response = await fetch('/api/ingest/wikipedia', {
       method: 'POST',
       headers: { 'Content-type': 'application/json' },
@@ -40,14 +43,11 @@ export function IngestWikipedia() {
       });
     } else {
       toast({
-        title: 'Ingestion wikipedia term',
-        description: (
-          <p>
-            {data.term}. Response: {json.term}{' '}
-          </p>
-        ),
+        title: 'Ingested wikipedia page',
+        description: <p>{data.term} </p>,
       });
     }
+    setLoading(false);
   }
 
   return (
@@ -75,8 +75,8 @@ export function IngestWikipedia() {
           />
 
           <div className="mt-4 flex items-center justify-center">
-            <Button type="submit" className="mt-4">
-              Ingest
+            <Button type="submit" className="mt-4" disabled={loading}>
+              {loading ? 'Ingesting...' : 'Ingest'}
             </Button>
           </div>
         </form>
