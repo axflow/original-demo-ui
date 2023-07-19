@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import Sidebar from '@/app/components/sidebar';
 import { Toaster } from '@/components/ui/toaster';
+import { ConfigProvider } from '@/app/components/config-context';
 
 export const metadata: Metadata = {
   title: {
@@ -37,17 +38,19 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <head />
         <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <main className="flex h-screen flex-col">
-              <div className="flex flex-1">
-                <div className="flex w-[400px] overflow-y-auto">
-                  <Sidebar />
+            <ConfigProvider>
+              <main className="flex h-screen flex-col">
+                <div className="flex flex-1">
+                  <div className="flex w-[400px] overflow-y-auto">
+                    <Sidebar />
+                  </div>
+                  <div className="flex flex-1 flex-col">
+                    <div className="paragraph flex flex-1 overflow-y-auto px-4">{children}</div>
+                    <Toaster />
+                  </div>
                 </div>
-                <div className="flex flex-1 flex-col">
-                  <div className="paragraph flex flex-1 overflow-y-auto px-4">{children}</div>
-                  <Toaster />
-                </div>
-              </div>
-            </main>
+              </main>
+            </ConfigProvider>
           </ThemeProvider>
         </body>
       </html>
