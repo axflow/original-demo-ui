@@ -20,6 +20,7 @@ import { toast } from '@/components/ui/use-toast';
 
 export function QueryWidget() {
   const [response, setResponse] = useState<string>('');
+  const [querying, setQuerying] = useState<boolean>(false);
 
   const QuerySchema = z.object({
     prompt: z
@@ -39,6 +40,7 @@ export function QueryWidget() {
   });
 
   async function onSubmit(data: z.infer<typeof QuerySchema>) {
+    setQuerying(true);
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({ question: data.prompt, llmOnly: !data.includeDocuments }),
@@ -54,6 +56,7 @@ export function QueryWidget() {
       // TODO make this streaming
       setResponse(json.response);
     }
+    setQuerying(false);
   }
   return (
     <div className="flex flex-col items-center">
@@ -72,7 +75,7 @@ export function QueryWidget() {
                     <div className="mt-4 flex flex-col gap-2">
                       <FormLabel className="min-w-fit">Question</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Ask your data a question" {...field} rows={5} />
+                        <Textarea placeholder="Ask your data a question" {...field} rows={4} />
                       </FormControl>
                     </div>
                     <FormDescription>
@@ -103,15 +106,15 @@ export function QueryWidget() {
               />
 
               <div className="mt-4 flex items-center justify-center">
-                <Button type="submit" className="mt-4">
-                  Query
+                <Button type="submit" className="mt-4" disabled={querying}>
+                  {querying ? 'Querying...' : 'Query'}
                 </Button>
               </div>
             </form>
           </Form>
 
           <Label>Response</Label>
-          <Textarea defaultValue={response} rows={15} />
+          <Textarea defaultValue={response.trim()} rows={10} />
         </div>
       </section>
     </div>
