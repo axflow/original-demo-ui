@@ -24,7 +24,7 @@ export function IngestDocumentUpload() {
     setIngesting(true);
 
     const firstDoc = data.document[0];
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('file', firstDoc);
     formData.append('store', store);
 

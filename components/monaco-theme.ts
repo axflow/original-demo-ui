@@ -71,7 +71,7 @@ const rules = (colors: Record<keyof ColorsType, string>) => [
 ];
 
 const theme = {
-  base: 'vs-dark' as 'vs-dark',
+  base: 'vs-dark' as const,
   inherit: false,
   rules: rules(colors),
 
@@ -93,7 +93,7 @@ const theme = {
 };
 
 const lightTheme = {
-  base: 'vs' as 'vs',
+  base: 'vs' as const,
   inherit: false,
   rules: rules(lightColors),
 

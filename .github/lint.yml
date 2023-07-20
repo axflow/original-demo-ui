@@ -1,0 +1,13 @@
+name: Lint
+on: [pull_request]
+jobs:
+  pr_lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Run linter
+      - run: npm run lint
