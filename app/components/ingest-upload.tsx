@@ -32,7 +32,6 @@ export function IngestDocumentUpload() {
       body: formData,
     });
     const responseData = await response.json();
-    console.log(responseData);
 
     if (responseData.error) {
       toast({
