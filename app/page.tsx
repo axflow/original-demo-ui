@@ -15,26 +15,16 @@ function IngestTab() {
   }, [router, pathname]);
 
   return (
-    <div className="flex flex-col items-center">
-      <section className="my-8 flex flex-col items-center">
-        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          Ingest from wikipedia
-        </h1>
-        <IngestWikipedia />
-      </section>
+    <div className="flex w-full flex-col items-center py-8">
+      <IngestWikipedia />
 
-      <div className="my-16 flex w-1/2 items-center justify-center gap-2">
-        <Separator />
+      <div className="my-12 flex w-1/2 items-center justify-center gap-2">
+        <Separator className="w-1/3" />
         <p>or</p>
-        <Separator />
+        <Separator className="w-1/3" />
       </div>
 
-      <section className="my-8 flex flex-col items-center">
-        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          Upload a file
-        </h1>
-        <IngestDocumentUpload />
-      </section>
+      <IngestDocumentUpload />
     </div>
   );
 }

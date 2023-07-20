@@ -12,6 +12,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
@@ -51,36 +53,42 @@ export function IngestWikipedia() {
   }
 
   return (
-    <div className="max-w-xl">
-      <Form {...wikipediaForm}>
-        <form onSubmit={wikipediaForm.handleSubmit(onSubmitWikipedia)}>
-          <FormField
-            control={wikipediaForm.control}
-            name="term"
-            render={({ field }) => (
-              <FormItem>
-                <div className="mt-4 flex items-center gap-2">
-                  <FormLabel className="min-w-fit">wikipedia term</FormLabel>
-                  <FormControl>
-                    <Input type="string" {...field} />
-                  </FormControl>
-                </div>
-                <FormDescription>
-                  Specify a wikipedia term and we will automatically fetch and ingest it into the
-                  configured store.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="mt-4 flex items-center justify-center">
-            <Button type="submit" className="mt-4" disabled={loading}>
-              {loading ? 'Ingesting...' : 'Ingest'}
-            </Button>
-          </div>
-        </form>
-      </Form>
+    <div className="flex w-full flex-col items-center">
+      <Card className="w-4/5">
+        <CardHeader>
+          <CardTitle className="pb-4 text-center">Ingest from wikipedia</CardTitle>
+          <CardDescription>
+            Simply enter a wikipedia term and the app will fetch it, chunk it, and ingest the chunks
+            into the store.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...wikipediaForm}>
+            <form onSubmit={wikipediaForm.handleSubmit(onSubmitWikipedia)}>
+              <FormField
+                control={wikipediaForm.control}
+                name="term"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center gap-2">
+                      <FormLabel className="min-w-fit">wikipedia term</FormLabel>
+                      <FormControl>
+                        <Input type="string" {...field} />
+                      </FormControl>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="mt-4 flex items-center justify-center">
+                <Button type="submit" className="mt-4" disabled={loading}>
+                  {loading ? 'Ingesting...' : 'Ingest'}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

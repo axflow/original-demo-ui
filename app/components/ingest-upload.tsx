@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useConfig } from '@/app/components/config-context';
 import { toast } from '@/components/ui/use-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function IngestDocumentUpload() {
   const { store } = useConfig();
@@ -61,34 +62,46 @@ export function IngestDocumentUpload() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onUpload)}>
-      <div className="flex flex-col">
-        <div className="mt-4 flex items-center gap-2">
-          <Label className="min-w-fit" htmlFor="document">
-            Upload document
-          </Label>
-          <Input
-            {...register('document', { required: true, validate: validateFile })}
-            type="file"
-            className="file:rounded file:bg-input hover:file:cursor-pointer file:hover:bg-accent"
-          />
-        </div>
-        <p className="mt-2 text-sm text-muted-foreground">
-          We currently only support markdown files (.md)
-        </p>
-        {errors.document?.type === 'required' && (
-          <p className="text-sm text-destructive">This field is required</p>
-        )}
-        {errors.document?.type === 'validate' && (
-          <p className="text-sm text-destructive">Please upload a markdown file</p>
-        )}
-      </div>
+    <div className="flex w-full flex-col items-center">
+      <Card className="w-4/5">
+        <CardHeader>
+          <CardTitle className="pb-4 text-center">Upload a file</CardTitle>
+          <CardDescription>
+            Select a markdown file to upload. It will get chunked and ingested into the store.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onUpload)}>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <Label className="min-w-fit" htmlFor="document">
+                  Upload document
+                </Label>
+                <Input
+                  {...register('document', { required: true, validate: validateFile })}
+                  type="file"
+                  className="file:rounded file:bg-input hover:file:cursor-pointer file:hover:bg-accent"
+                />
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">
+                We currently only support markdown files (.md)
+              </p>
+              {errors.document?.type === 'required' && (
+                <p className="text-sm text-destructive">This field is required</p>
+              )}
+              {errors.document?.type === 'validate' && (
+                <p className="text-sm text-destructive">Please upload a markdown file</p>
+              )}
+            </div>
 
-      <div className="mt-4 flex items-center justify-center">
-        <Button type="submit" className="mt-4" disabled={!!errors.document || ingesting}>
-          {ingesting ? 'Ingesting' : 'Upload'}
-        </Button>
-      </div>
-    </form>
+            <div className="mt-4 flex items-center justify-center">
+              <Button type="submit" className="mt-4" disabled={!!errors.document || ingesting}>
+                {ingesting ? 'Ingesting' : 'Upload'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
