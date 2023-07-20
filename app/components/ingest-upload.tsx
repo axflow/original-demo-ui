@@ -4,9 +4,11 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { useConfig } from '@/app/components/config-context';
 import { toast } from '@/components/ui/use-toast';
 
 export function IngestDocumentUpload() {
+  const { store } = useConfig();
   const [ingesting, setIngesting] = useState(false);
   interface IFormInput {
     document: FileList;
@@ -23,15 +25,14 @@ export function IngestDocumentUpload() {
     const firstDoc = data.document[0];
     let formData = new FormData();
     formData.append('file', firstDoc);
+    formData.append('store', store);
 
     const response = await window.fetch('/api/ingest/upload', {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json;charset=UTF-8',
-      },
       body: formData,
     });
     const responseData = await response.json();
+    console.log(responseData);
 
     if (responseData.error) {
       toast({

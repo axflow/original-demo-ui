@@ -10,12 +10,13 @@ export interface ConfigInterface {
   setTopK: (topK: number) => void;
   store: string;
   setStore: (store: string) => void;
+  embeddingModel: string;
+  setEmbeddingModel: (embeddingModel: string) => void;
+  dimensions: number;
 }
 
 const notImplemented = () => {
-  throw new Error(
-    'You need to wrap your application with the <PrivyProvider> initialized with your app id.'
-  );
+  throw new Error('Not implemented');
 };
 
 const ConfigContext = createContext<ConfigInterface>({
@@ -28,6 +29,9 @@ const ConfigContext = createContext<ConfigInterface>({
   setTopK: notImplemented,
   store: 'pinecone',
   setStore: notImplemented,
+  embeddingModel: 'text-embedding-ada-002',
+  setEmbeddingModel: notImplemented,
+  dimensions: 1536,
 });
 
 export const useConfig = () => {
@@ -39,6 +43,7 @@ export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Eleme
   const [temperature, setTemperature] = useState<number>(0);
   const [topK, setTopK] = useState<number>(3);
   const [store, setStore] = useState<string>('pinecone');
+  const [embeddingModel, setEmbeddingModel] = useState<string>('text-embedding-ada-002');
 
   const context: ConfigInterface = {
     model,
@@ -49,6 +54,10 @@ export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Eleme
     setTopK,
     store,
     setStore,
+    embeddingModel,
+    setEmbeddingModel,
+    // This is fixed.
+    dimensions: 1536,
   };
 
   return <ConfigContext.Provider value={context}>{children}</ConfigContext.Provider>;
