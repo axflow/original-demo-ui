@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
 import type { ChromaStore, PineconeStore } from '@/types/store';
 
@@ -53,19 +54,27 @@ export function PineconeStoreConfigForm() {
         <TableBody>
           <TableRow>
             <TableCell className="font-medium">index name</TableCell>
-            <TableCell>{defaultPineconeStore.indexName}</TableCell>
+            <TableCell className="text-right">
+              <Badge variant="secondary">{defaultPineconeStore.indexName}</Badge>
+            </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">index dimensions</TableCell>
-            <TableCell>{defaultPineconeStore.indexDimensions}</TableCell>
+            <TableCell className="font-medium">dimensions</TableCell>
+            <TableCell className="text-right">
+              <Badge variant="secondary">{defaultPineconeStore.indexDimensions}</Badge>
+            </TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-medium">namespace</TableCell>
-            <TableCell>{defaultPineconeStore.namespace}</TableCell>
+            <TableCell className="text-right">
+              <Badge variant="secondary">{defaultPineconeStore.namespace}</Badge>
+            </TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className="font-medium">namespace</TableCell>
-            <TableCell>{defaultPineconeStore.environment}</TableCell>
+            <TableCell className="font-medium">environment</TableCell>
+            <TableCell className="text-right">
+              <Badge variant="secondary">{defaultPineconeStore.environment}</Badge>
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
@@ -73,9 +82,8 @@ export function PineconeStoreConfigForm() {
   );
 }
 
-export function StoreConfigForm() {
+export function VectorStoreWidget() {
   const { store, setStore } = useConfig();
-  const { embeddingModel, setEmbeddingModel } = useConfig();
 
   const sendToast = (key: string, value: string) => {
     return toast({
@@ -106,24 +114,6 @@ export function StoreConfigForm() {
       </div>
       {store === 'pinecone' && <PineconeStoreConfigForm />}
       {store === 'chroma' && <ChromaStoreConfigForm />}
-
-      <div className="flex items-center gap-4">
-        <Label className="min-w-fit">Embedding Model</Label>
-        <Select
-          onValueChange={(e) => {
-            setEmbeddingModel(e);
-            sendToast('embedding model', e);
-          }}
-          defaultValue={embeddingModel}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="select embedding model" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="text-embedding-ada-002">text-embedding-ada-002</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
     </div>
   );
 }

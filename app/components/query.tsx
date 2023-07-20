@@ -16,13 +16,12 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/ui/use-toast';
 
 export function QueryWidget() {
   const [response, setResponse] = useState<string>('');
   const [querying, setQuerying] = useState<boolean>(false);
-  const { topK, temperature, model } = useConfig();
+  const { topK, temperature, model, includeDocs } = useConfig();
 
   const QuerySchema = z.object({
     prompt: z
@@ -31,14 +30,10 @@ export function QueryWidget() {
       })
       .min(10, { message: 'The minimum prompt length is 10 characters.' })
       .max(3000, { message: 'The maximum prompt length is 3000 characters.' }),
-    includeDocuments: z.boolean().default(true),
   });
 
   const queryForm = useForm<z.infer<typeof QuerySchema>>({
     resolver: zodResolver(QuerySchema),
-    defaultValues: {
-      includeDocuments: true,
-    },
   });
 
   async function onSubmit(data: z.infer<typeof QuerySchema>) {
@@ -47,7 +42,7 @@ export function QueryWidget() {
       method: 'POST',
       body: JSON.stringify({
         question: data.prompt,
-        llmOnly: !data.includeDocuments,
+        llmOnly: !includeDocs,
         topK,
         temperature,
         model,
@@ -91,24 +86,6 @@ export function QueryWidget() {
                       and return the LLM&rsquo;s response.
                     </FormDescription>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={queryForm.control}
-                name="includeDocuments"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg py-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Include documents</FormLabel>
-                      <FormDescription>
-                        If toggled, the query will fetch and include documents in the context.
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
                   </FormItem>
                 )}
               />

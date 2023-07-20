@@ -1,5 +1,6 @@
 'use client';
-import { StoreConfigForm } from '@/app/components/store-config';
+import { EmbeddingModel } from '@/app/components/embedding-model';
+import { VectorStoreWidget } from '@/app/components/store-config';
 import { QueryConfigForm } from '@/app/components/query-config';
 import { Separator } from '@/components/ui/separator';
 
@@ -12,13 +13,18 @@ export default function Sidebar() {
       <div className="flex flex-col items-center justify-center">
         <h1 className="py-4 text-2xl font-extrabold">Query config</h1>
 
-        <div className="px-4">
+        <div className="w-full px-4">
           <QueryConfigForm />
         </div>
         <Separator className="mt-4" />
-        <h1 className="py-4 text-2xl font-extrabold">Store config</h1>
-        <div className="px-4">
-          <StoreConfigForm />
+        <h1 className="py-4 text-2xl font-extrabold">Vector store</h1>
+        <div className="w-full px-4">
+          <VectorStoreWidget />
+        </div>
+        <Separator className="mt-4" />
+        <h1 className="py-4 text-2xl font-extrabold">Embedding model</h1>
+        <div className="w-full px-4">
+          <EmbeddingModel />
         </div>
       </div>
     </div>

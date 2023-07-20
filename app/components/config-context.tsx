@@ -12,6 +12,8 @@ export interface ConfigInterface {
   setStore: (store: string) => void;
   embeddingModel: string;
   setEmbeddingModel: (embeddingModel: string) => void;
+  includeDocs: boolean;
+  setIncludeDocs: (includeDocs: boolean) => void;
   dimensions: number;
 }
 
@@ -31,6 +33,8 @@ const ConfigContext = createContext<ConfigInterface>({
   setStore: notImplemented,
   embeddingModel: 'text-embedding-ada-002',
   setEmbeddingModel: notImplemented,
+  includeDocs: true,
+  setIncludeDocs: notImplemented,
   dimensions: 1536,
 });
 
@@ -44,6 +48,7 @@ export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Eleme
   const [topK, setTopK] = useState<number>(3);
   const [store, setStore] = useState<string>('pinecone');
   const [embeddingModel, setEmbeddingModel] = useState<string>('text-embedding-ada-002');
+  const [includeDocs, setIncludeDocs] = useState<boolean>(true);
 
   const context: ConfigInterface = {
     model,
@@ -56,6 +61,8 @@ export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Eleme
     setStore,
     embeddingModel,
     setEmbeddingModel,
+    includeDocs,
+    setIncludeDocs,
     // This is fixed.
     dimensions: 1536,
   };
