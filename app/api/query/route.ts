@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/query';
 
 export async function POST(request: NextRequest) {
-  const { question, llmOnly, topK, model } = await request.json();
-  // TODO pass temperature through
+  const { question, llmOnly, topK, model, temperature } = await request.json();
   try {
-    const response = await query(question, model, llmOnly, topK);
+    const response = await query({ query: question, model, llmOnly, topK, temperature });
     return NextResponse.json({ response }, { status: 200 });
   } catch (error: unknown) {
     let message = 'Unknown Error';
