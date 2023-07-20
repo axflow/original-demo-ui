@@ -1,4 +1,4 @@
-import { Pinecone } from 'axgen';
+import { Pinecone, Chroma } from 'axgen';
 import { getEnvOrThrow } from './utils';
 
 export const getPineconeStore = () => {
@@ -7,6 +7,13 @@ export const getPineconeStore = () => {
     namespace: getEnvOrThrow('PINECONE_NAMESPACE'),
     apiKey: getEnvOrThrow('PINECONE_API_KEY'),
     environment: getEnvOrThrow('PINECONE_ENVIRONMENT'),
+  });
+};
+
+export const getChromaStore = () => {
+  return new Chroma({
+    path: getEnvOrThrow('CHROMA_PATH'),
+    collection: getEnvOrThrow('CHROMA_COLLECTION'),
   });
 };
 
