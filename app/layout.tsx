@@ -42,7 +42,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <ConfigProvider>
               <main className="flex h-screen flex-col">
-                <div className="flex items-center justify-between border border-border bg-background px-4 py-2">
+                <div className="flex items-center justify-between border border-border bg-background px-6 py-4">
                   <Link href="https://axilla.io" target="_blank">
                     <Image
                       src="/axilla-logo-text-white.png"

@@ -79,8 +79,8 @@ export function QueryConfigForm() {
                   <SelectValue placeholder="select model" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="gpt-4">GPT-4</SelectItem>
-                  <SelectItem value="gpt-3.5-turbo">GPT-3.5</SelectItem>
+                  <SelectItem value="gpt-4">gpt-4</SelectItem>
+                  <SelectItem value="gpt-3.5-turbo">gpt-3.5-turbo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
