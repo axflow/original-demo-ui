@@ -4,6 +4,7 @@ import { useConfig } from '@/app/components/config-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import type { ContextDocument } from '@/lib/types';
 import {
   Form,
   FormControl,
@@ -17,10 +18,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
+import DocumentCard from '@/app/components/document-card';
 
 export function QueryWidget() {
   const [response, setResponse] = useState<string>('');
   const [querying, setQuerying] = useState<boolean>(false);
+  const [docs, setDocs] = useState<Array<ContextDocument>>([]);
   const { topK, temperature, completionModel, chatModel, includeDocs } = useConfig();
 
   const QuerySchema = z.object({
@@ -63,6 +66,11 @@ export function QueryWidget() {
       ? json.response.result.choices[0].message.content
       : json.response.choices[0].message.content;
     setResponse(msg);
+
+    // Update the docs object
+    const docObjects = json.response.context;
+    setDocs(docObjects);
+    console.log(docObjects);
   };
 
   const completion = async (
@@ -89,10 +97,17 @@ export function QueryWidget() {
     }
     const msg = includeDocs ? json.response.result : json.response;
     setResponse(msg);
+
+    // Update the docs object
+    const docObjects = json.response.context;
+    setDocs(docObjects);
+    console.log(docObjects);
   };
 
   async function onSubmit(data: z.infer<typeof QuerySchema>) {
     setQuerying(true);
+    setResponse('');
+    setDocs([]);
     if (completionModel) {
       await completion(data.prompt, includeDocs, topK, temperature, completionModel);
     } else if (chatModel) {
@@ -132,7 +147,7 @@ export function QueryWidget() {
                 )}
               />
 
-              <div className="mt-4 flex items-center justify-center">
+              <div className=" flex items-center justify-center">
                 <Button type="submit" className="mt-4" disabled={querying}>
                   {querying ? 'Querying...' : 'Query'}
                 </Button>
@@ -143,6 +158,17 @@ export function QueryWidget() {
           <Label>Response</Label>
           <Textarea defaultValue={response.trim()} rows={10} />
         </div>
+
+        {docs && docs.length > 0 && (
+          <div className="w-3/4 py-6">
+            <Label className="mb-4">Retrieved Documents</Label>
+            <div className="flex flex-row gap-6 ">
+              {docs.map((doc, idx) => (
+                <DocumentCard key={doc.id} document={doc} idx={idx} />
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );
