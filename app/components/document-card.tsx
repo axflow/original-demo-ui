@@ -12,7 +12,7 @@ export default function DocumentCard({
     <>
       <Card className="hover:bg-border">
         <CardHeader>
-          <CardTitle>Document chunk #{idx}</CardTitle>
+          <CardTitle>Document chunk #{idx + 1}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm">{document.chunk.text}</CardContent>
         {document.similarity && (
