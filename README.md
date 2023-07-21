@@ -1,8 +1,10 @@
 # Axilla demo UI
 
+### [Demo video 🎥](https://www.loom.com/share/458f9b6679b740f0a5c78a33fffee3dc)
+
 This demo UI showcases how to build RAG (retrieval augmented generation) workflows using the [axgen](https://github.com/axilla-io/axgen) library.
 
-![CleanShot 2023-07-21 at 14 00 32](https://github.com/axilla-io/demo-ui/assets/1666947/d0409fa1-6f71-45a1-bb04-4ee054238e1e)
+![Demo UI Screenshot](./public/demo-screenshot.png)
 
 The UI covers the usual flow, which has 2 separate parts:
 
@@ -17,10 +19,8 @@ Please give us any feedback (bugs, requests, questions) at hello@axilla.io. We l
 
 ## Axilla
 
-At [Axilla](https://axilla.io), we are building an end-to-end opinionated, open source framework to work with LLMs in TypeScript. Axgen is the first module, but we have more coming very soon.
-Giving [axgen](https://github.com/axilla-io/axgen) is very helpful for our visibility right now, so we appreciate it if you can spare one!
-
-Finally, you can find a walkthrough of the demo UI in this LOOM video: https://www.loom.com/share/458f9b6679b740f0a5c78a33fffee3dc
+At [Axilla](https://axilla.io), we are building an opinionated end-to-end framework to work with LLMs in TypeScript.
+Our first module open source module is [axgen](https://github.com/axilla-io/axgen), focused on document ingestion and retrieval. Giving it a star ⭐️ is very helpful for our visibility, so we appreciate it if you can spare one!
 
 ## Usage
 
