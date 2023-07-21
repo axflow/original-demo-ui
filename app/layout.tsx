@@ -1,4 +1,6 @@
 import '@/styles/globals.css';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Metadata } from 'next';
 
 import { siteConfig } from '@/config/site';
@@ -40,6 +42,25 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <ConfigProvider>
               <main className="flex h-screen flex-col">
+                <div className="flex items-center justify-between border border-border bg-background px-4 py-2">
+                  <Image
+                    src="/axilla-logo-text-white.png"
+                    height={30}
+                    width={90}
+                    alt="Axilla logo"
+                  />
+                  <Link href="https://github.com/axilla-io/axgen">
+                    <div className="flex items-center gap-4">
+                      <p className="font-mono">UI demo made with axgen</p>
+                      <Image
+                        src="/github-mark-white.png"
+                        width={32}
+                        height={32}
+                        alt="GitHub logo"
+                      />
+                    </div>
+                  </Link>
+                </div>
                 <div className="flex flex-1">
                   <div className="flex w-[400px] overflow-y-auto">
                     <Sidebar />
