@@ -43,12 +43,14 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <ConfigProvider>
               <main className="flex h-screen flex-col">
                 <div className="flex items-center justify-between border border-border bg-background px-4 py-2">
-                  <Image
-                    src="/axilla-logo-text-white.png"
-                    height={30}
-                    width={90}
-                    alt="Axilla logo"
-                  />
+                  <Link href="https://axilla.io" target="_blank">
+                    <Image
+                      src="/axilla-logo-text-white.png"
+                      height={30}
+                      width={90}
+                      alt="Axilla logo"
+                    />
+                  </Link>
                   <Link href="https://github.com/axilla-io/axgen">
                     <div className="flex items-center gap-4">
                       <p className="font-mono">UI demo made with axgen</p>
