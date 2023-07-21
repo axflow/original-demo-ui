@@ -36,22 +36,22 @@ export function QueryWidget() {
     resolver: zodResolver(QuerySchema),
   });
 
-  // TODO add streaming
-  const completion = async (
+  const chat = async (
     question: string,
     includeDocs: boolean,
     topK: number,
     temperature: number,
-    completionModel: string
+    model: string
   ) => {
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({
+        modelType: 'chat',
         question,
         llmOnly: !includeDocs,
         topK,
         temperature,
-        completionModel,
+        model,
       }),
     });
     const json = await res.json();
@@ -62,20 +62,61 @@ export function QueryWidget() {
         description: <p>{json.error}</p>,
       });
     } else {
-      setResponse(json.response);
+      if (includeDocs) {
+        // TODO better handling of the response type
+        setResponse(json.response.result.choices[0].message.content);
+      } else {
+        setResponse(json.response.choices[0].message.content);
+      }
+    }
+  };
+  // TODO add streaming
+  const completion = async (
+    question: string,
+    includeDocs: boolean,
+    topK: number,
+    temperature: number,
+    model: string
+  ) => {
+    const res = await fetch('/api/query', {
+      method: 'POST',
+      body: JSON.stringify({
+        modelType: 'completion',
+        question,
+        llmOnly: !includeDocs,
+        topK,
+        temperature,
+        model,
+      }),
+    });
+    const json = await res.json();
+    if (json.error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error ingesting',
+        description: <p>{json.error}</p>,
+      });
+    } else {
+      if (includeDocs) {
+        setResponse(json.response.result);
+      } else {
+        setResponse(json.response);
+      }
     }
   };
 
   async function onSubmit(data: z.infer<typeof QuerySchema>) {
-    console.log(completionModel);
     setQuerying(true);
     if (completionModel) {
       await completion(data.prompt, includeDocs, topK, temperature, completionModel);
+    } else if (chatModel) {
+      await chat(data.prompt, includeDocs, topK, temperature, chatModel);
     } else {
-      toast({ title: 'Error', description: 'No completion model was passed' });
+      toast({ title: 'Error', description: 'Something went wrong', variant: 'destructive' });
     }
     setQuerying(false);
   }
+
   return (
     <div className="flex flex-col items-center">
       <section className="my-8 flex w-full flex-col items-center">

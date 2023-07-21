@@ -24,7 +24,7 @@ const notImplemented = () => {
 };
 
 export const DEFAULT_COMPLETION_MODEL = 'text-davinci-003';
-export const DEFAULT_CHAT_MODEL = 'GPT-4';
+export const DEFAULT_CHAT_MODEL = 'gpt-4';
 
 const ConfigContext = createContext<ConfigInterface>({
   // Default values

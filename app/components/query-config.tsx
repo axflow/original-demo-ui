@@ -22,8 +22,6 @@ import { Switch } from '@/components/ui/switch';
 export function QueryConfigForm() {
   const { completionModel, chatModel, topK, temperature, includeDocs } = useConfig();
   const { setCompletionModel, setChatModel, setTopK, setTemperature, setIncludeDocs } = useConfig();
-  console.log(completionModel);
-  console.log(chatModel);
 
   const sendToast = (key: string, value: string) => {
     return toast({
@@ -82,8 +80,8 @@ export function QueryConfigForm() {
                   <SelectValue placeholder="select model" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="GPT-4">GPT-4</SelectItem>
-                  <SelectItem value="GPT-3.5">GPT-3.5</SelectItem>
+                  <SelectItem value="gpt-4">GPT-4</SelectItem>
+                  <SelectItem value="gpt-3.5-turbo">GPT-3.5</SelectItem>
                 </SelectContent>
               </Select>
             </div>

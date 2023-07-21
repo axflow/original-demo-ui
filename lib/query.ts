@@ -1,7 +1,12 @@
 import {
   BasicPrompt,
   Completion,
+  ChatCompletion,
+  OpenAIChatCompletion,
+  BasicPromptMessage,
   RAG,
+  RAGChat,
+  PromptMessageWithContext,
   OpenAIEmbedder,
   Retriever,
   PromptWithContext,
@@ -21,7 +26,42 @@ type QueryOptions = {
   // For now, hardcode to matching the 'term' field of the metadata
   filterTerm?: string;
 };
-export async function query(opts: QueryOptions) {
+
+export async function queryChat(opts: QueryOptions) {
+  return opts.llmOnly
+    ? chat(opts.query, opts.model, opts.temperature)
+    : ragChat(opts.query, opts.model, opts.topK, opts.temperature);
+}
+
+export const chat = async (query: string, model: string, temperature: number) => {
+  const completion = new ChatCompletion({
+    model: new OpenAIChatCompletion({ model: model, max_tokens: 1000, temperature }),
+    prompt: new BasicPromptMessage({ template: QUESTION_WITHOUT_CONTEXT }),
+  });
+
+  console.log('running chat');
+  return completion.run(query);
+};
+
+export const ragChat = async (
+  question: string,
+  model: string,
+  topK: number,
+  temperature: number
+) => {
+  const pinecone = getPineconeStore();
+  const rag = new RAGChat({
+    model: new OpenAIChatCompletion({ model: model, max_tokens: 1000, temperature }),
+    prompt: new PromptMessageWithContext({ template: QUESTION_WITH_CONTEXT }),
+    retriever: new Retriever({ store: pinecone, topK: topK }),
+    embedder: new OpenAIEmbedder(),
+  });
+
+  console.log('running RAG chat');
+  return rag.run(question);
+};
+
+export async function queryCompletion(opts: QueryOptions) {
   return opts.llmOnly
     ? completion(opts.query, opts.model, opts.temperature)
     : rag(opts.query, opts.model, opts.topK, opts.temperature);
@@ -33,6 +73,7 @@ export const completion = async (query: string, model: string, temperature: numb
     prompt: new BasicPrompt({ template: QUESTION_WITHOUT_CONTEXT }),
   });
 
+  console.log('running completion');
   return completion.run(query);
 };
 
@@ -52,5 +93,6 @@ export const rag = async (question: string, model: string, topK: number, tempera
     retriever: new Retriever({ store: pinecone, topK }),
   });
 
+  console.log('running RAG completion');
   return rag.run(question);
 };
