@@ -15,6 +15,13 @@ You can easily toggle document inclusion on/off, to see the difference. The UI a
 
 Please give us any feedback (bugs, requests, questions) at hello@axilla.io. We love talking to our users so don't be shy.
 
+## Axilla
+
+At [Axilla](https://axilla.io), we are building an end-to-end opinionated, open source framework to work with LLMs in TypeScript. Axgen is the first module, but we have more coming very soon.
+Giving [axgen](https://github.com/axilla-io/axgen) is very helpful for our visibility right now, so we appreciate it if you can spare one!
+
+Finally, you can find a walkthrough of the demo UI in this LOOM video: https://www.loom.com/share/458f9b6679b740f0a5c78a33fffee3dc
+
 ## Usage
 
 This is a simple nextJS application, that was tested using node 18.
