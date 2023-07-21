@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
@@ -15,8 +16,8 @@ import { toast } from '@/components/ui/use-toast';
 import { Switch } from '@/components/ui/switch';
 
 export function QueryConfigForm() {
-  const { model, topK, temperature, includeDocs } = useConfig();
-  const { setModel, setTopK, setTemperature, setIncludeDocs } = useConfig();
+  const { completionModel, chatModel, topK, temperature, includeDocs } = useConfig();
+  const { setCompletionModel, setChatModel, setTopK, setTemperature, setIncludeDocs } = useConfig();
 
   const sendToast = (key: string, value: string) => {
     return toast({
@@ -39,56 +40,89 @@ export function QueryConfigForm() {
   };
 
   return (
-    <div className="flex w-full flex-col gap-2">
-      <div className="flex items-center justify-between gap-4 pt-2">
-        <Label className="w-1/2">Model</Label>
-        <Select
-          onValueChange={(e) => {
-            setModel(e);
-            sendToast('model', e);
-          }}
-          defaultValue={model}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="select model" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="text-davinci-003">text-davinci-003</SelectItem>
-            <SelectItem value="text-davinci-002">text-davinci-002</SelectItem>
-            <SelectItem value="text-davinci-001">text-davinci-001</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+    <Tabs defaultValue="chat" className="w-full">
+      <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full items-center justify-between gap-4 pt-2">
+          <Label className="w-1/2">Model type</Label>
+          <TabsList>
+            <TabsTrigger value="chat">Chat</TabsTrigger>
+            <TabsTrigger value="completion">Completion</TabsTrigger>
+          </TabsList>
+        </div>
+        <div className="w-full">
+          <TabsContent value="chat">
+            <div className="flex w-full items-center justify-between gap-4 pt-2">
+              <Label className="w-full">Chat model</Label>
+              <Select
+                onValueChange={(e) => {
+                  setChatModel(e);
+                  sendToast('model', e);
+                }}
+                defaultValue={chatModel}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="select model" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="GPT-4">GPT-4</SelectItem>
+                  <SelectItem value="GPT-3.5">GPT-3.5</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </TabsContent>
+          <TabsContent value="completion">
+            <div className="flex w-full items-center justify-between gap-4 pt-2">
+              <Label className="w-full">Completion model</Label>
+              <Select
+                onValueChange={(e) => {
+                  setCompletionModel(e);
+                  sendToast('model', e);
+                }}
+                defaultValue={completionModel}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="select model" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="text-davinci-003">text-davinci-003</SelectItem>
+                  <SelectItem value="text-davinci-002">text-davinci-002</SelectItem>
+                  <SelectItem value="text-davinci-001">text-davinci-001</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </TabsContent>
+        </div>
 
-      <div className="flex items-center gap-4">
-        <Label className="w-1/2">Top K</Label>
-        <Input onChange={validateAndSubmitTopK} value={topK} />
-      </div>
+        <div className="flex items-center gap-4">
+          <Label className="w-full">Top K</Label>
+          <Input onChange={validateAndSubmitTopK} value={topK} />
+        </div>
 
-      <div className="flex items-center gap-4 py-2">
-        <Label className="w-1/2">Temperature</Label>
-        <p className="px-4">{temperature}</p>
-        <Slider
-          defaultValue={[0]}
-          max={1}
-          step={0.1}
-          onValueChange={(e) => {
-            setTemperature(e[0]), sendToast('temperature', e[0].toString());
-          }}
-        />
-      </div>
+        <div className="flex items-center gap-4 py-2">
+          <Label className="w-full">Temperature</Label>
+          <p className="pl-4">{temperature}</p>
+          <Slider
+            defaultValue={[0]}
+            max={1}
+            step={0.1}
+            onValueChange={(e) => {
+              setTemperature(e[0]), sendToast('temperature', e[0].toString());
+            }}
+          />
+        </div>
 
-      <div className="flex items-center gap-4 py-2">
-        <Label className="w-1/2">Include documents</Label>
-        <p className="px-4">{includeDocs}</p>
-        <Switch
-          checked={includeDocs}
-          onCheckedChange={(e) => {
-            setIncludeDocs(e);
-            sendToast('include docs', e.toString());
-          }}
-        />
+        <div className="flex items-center gap-4 py-2">
+          <Label className="w-full">Include documents</Label>
+          <p className="px-4">{includeDocs}</p>
+          <Switch
+            checked={includeDocs}
+            onCheckedChange={(e) => {
+              setIncludeDocs(e);
+              sendToast('include docs', e.toString());
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </Tabs>
   );
 }

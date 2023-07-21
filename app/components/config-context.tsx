@@ -2,8 +2,10 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface ConfigInterface {
-  model: string;
-  setModel: (model: string) => void;
+  chatModel: string;
+  setChatModel: (model: string) => void;
+  completionModel: string;
+  setCompletionModel: (model: string) => void;
   temperature: number;
   setTemperature: (temperature: number) => void;
   topK: number;
@@ -23,8 +25,10 @@ const notImplemented = () => {
 
 const ConfigContext = createContext<ConfigInterface>({
   // Default values
-  model: 'text-davinci-003',
-  setModel: notImplemented,
+  completionModel: 'text-davinci-003',
+  setCompletionModel: notImplemented,
+  chatModel: 'GPT-4',
+  setChatModel: notImplemented,
   temperature: 0,
   setTemperature: notImplemented,
   topK: 3,
@@ -43,7 +47,8 @@ export const useConfig = () => {
 };
 
 export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Element => {
-  const [model, setModel] = useState<string>('text-davinci-003');
+  const [completionModel, setCompletionModel] = useState<string>('text-davinci-003');
+  const [chatModel, setChatModel] = useState<string>('GPT-4');
   const [temperature, setTemperature] = useState<number>(0);
   const [topK, setTopK] = useState<number>(3);
   const [store, setStore] = useState<string>('pinecone');
@@ -51,8 +56,10 @@ export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Eleme
   const [includeDocs, setIncludeDocs] = useState<boolean>(true);
 
   const context: ConfigInterface = {
-    model,
-    setModel,
+    completionModel: completionModel,
+    setCompletionModel: setCompletionModel,
+    chatModel: chatModel,
+    setChatModel: setChatModel,
     temperature,
     setTemperature,
     topK,
