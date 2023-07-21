@@ -1,6 +1,5 @@
 import type { ContextDocument } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 export default function DocumentCard({
   document,
@@ -11,7 +10,7 @@ export default function DocumentCard({
 }) {
   return (
     <>
-      <Card>
+      <Card className="hover:bg-border">
         <CardHeader>
           <CardTitle>Document chunk #{idx}</CardTitle>
         </CardHeader>

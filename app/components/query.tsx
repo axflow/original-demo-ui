@@ -162,7 +162,7 @@ export function QueryWidget() {
         {docs && docs.length > 0 && (
           <div className="w-3/4 py-6">
             <Label className="mb-4">Retrieved Documents</Label>
-            <div className="flex flex-row gap-6 ">
+            <div className="grid grid-cols-3 gap-6">
               {docs.map((doc, idx) => (
                 <DocumentCard key={doc.id} document={doc} idx={idx} />
               ))}
