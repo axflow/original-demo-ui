@@ -21,7 +21,7 @@ import { toast } from '@/components/ui/use-toast';
 export function QueryWidget() {
   const [response, setResponse] = useState<string>('');
   const [querying, setQuerying] = useState<boolean>(false);
-  const { topK, temperature, model, includeDocs } = useConfig();
+  const { topK, temperature, completionModel, chatModel, includeDocs } = useConfig();
 
   const QuerySchema = z.object({
     prompt: z
@@ -36,12 +36,18 @@ export function QueryWidget() {
     resolver: zodResolver(QuerySchema),
   });
 
-  async function onSubmit(data: z.infer<typeof QuerySchema>) {
-    setQuerying(true);
+  const chat = async (
+    question: string,
+    includeDocs: boolean,
+    topK: number,
+    temperature: number,
+    model: string
+  ) => {
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({
-        question: data.prompt,
+        modelType: 'chat',
+        question,
         llmOnly: !includeDocs,
         topK,
         temperature,
@@ -50,17 +56,53 @@ export function QueryWidget() {
     });
     const json = await res.json();
     if (json.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error ingesting',
-        description: <p>{json.error}</p>,
-      });
+      toast({ variant: 'destructive', title: 'Error ingesting', description: <p>{json.error}</p> });
+      return;
+    }
+    const msg = includeDocs
+      ? json.response.result.choices[0].message.content
+      : json.response.choices[0].message.content;
+    setResponse(msg);
+  };
+
+  const completion = async (
+    question: string,
+    includeDocs: boolean,
+    topK: number,
+    temperature: number,
+    model: string
+  ) => {
+    const res = await fetch('/api/query', {
+      method: 'POST',
+      body: JSON.stringify({
+        modelType: 'completion',
+        question,
+        llmOnly: !includeDocs,
+        topK,
+        temperature,
+        model,
+      }),
+    });
+    const json = await res.json();
+    if (json.error) {
+      toast({ variant: 'destructive', title: 'Error ingesting', description: <p>{json.error}</p> });
+    }
+    const msg = includeDocs ? json.response.result : json.response;
+    setResponse(msg);
+  };
+
+  async function onSubmit(data: z.infer<typeof QuerySchema>) {
+    setQuerying(true);
+    if (completionModel) {
+      await completion(data.prompt, includeDocs, topK, temperature, completionModel);
+    } else if (chatModel) {
+      await chat(data.prompt, includeDocs, topK, temperature, chatModel);
     } else {
-      // TODO make this streaming
-      setResponse(json.response);
+      toast({ title: 'Error', description: 'Something went wrong', variant: 'destructive' });
     }
     setQuerying(false);
   }
+
   return (
     <div className="flex flex-col items-center">
       <section className="my-8 flex w-full flex-col items-center">
