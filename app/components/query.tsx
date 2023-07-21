@@ -21,7 +21,7 @@ import { toast } from '@/components/ui/use-toast';
 export function QueryWidget() {
   const [response, setResponse] = useState<string>('');
   const [querying, setQuerying] = useState<boolean>(false);
-  const { topK, temperature, model, includeDocs } = useConfig();
+  const { topK, temperature, completionModel, chatModel, includeDocs } = useConfig();
 
   const QuerySchema = z.object({
     prompt: z
@@ -36,16 +36,22 @@ export function QueryWidget() {
     resolver: zodResolver(QuerySchema),
   });
 
-  async function onSubmit(data: z.infer<typeof QuerySchema>) {
-    setQuerying(true);
+  // TODO add streaming
+  const completion = async (
+    question: string,
+    includeDocs: boolean,
+    topK: number,
+    temperature: number,
+    completionModel: string
+  ) => {
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({
-        question: data.prompt,
+        question,
         llmOnly: !includeDocs,
         topK,
         temperature,
-        model,
+        completionModel,
       }),
     });
     const json = await res.json();
@@ -56,8 +62,17 @@ export function QueryWidget() {
         description: <p>{json.error}</p>,
       });
     } else {
-      // TODO make this streaming
       setResponse(json.response);
+    }
+  };
+
+  async function onSubmit(data: z.infer<typeof QuerySchema>) {
+    console.log(completionModel);
+    setQuerying(true);
+    if (completionModel) {
+      await completion(data.prompt, includeDocs, topK, temperature, completionModel);
+    } else {
+      toast({ title: 'Error', description: 'No completion model was passed' });
     }
     setQuerying(false);
   }

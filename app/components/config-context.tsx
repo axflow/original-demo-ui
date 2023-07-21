@@ -23,11 +23,14 @@ const notImplemented = () => {
   throw new Error('Not implemented');
 };
 
+export const DEFAULT_COMPLETION_MODEL = 'text-davinci-003';
+export const DEFAULT_CHAT_MODEL = 'GPT-4';
+
 const ConfigContext = createContext<ConfigInterface>({
   // Default values
-  completionModel: 'text-davinci-003',
+  completionModel: '', // we default to chat models
   setCompletionModel: notImplemented,
-  chatModel: 'GPT-4',
+  chatModel: DEFAULT_CHAT_MODEL,
   setChatModel: notImplemented,
   temperature: 0,
   setTemperature: notImplemented,
@@ -47,8 +50,8 @@ export const useConfig = () => {
 };
 
 export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Element => {
-  const [completionModel, setCompletionModel] = useState<string>('text-davinci-003');
-  const [chatModel, setChatModel] = useState<string>('GPT-4');
+  const [completionModel, setCompletionModel] = useState<string>('');
+  const [chatModel, setChatModel] = useState<string>(DEFAULT_CHAT_MODEL);
   const [temperature, setTemperature] = useState<number>(0);
   const [topK, setTopK] = useState<number>(3);
   const [store, setStore] = useState<string>('pinecone');

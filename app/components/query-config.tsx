@@ -1,6 +1,10 @@
 'use client';
 import { ChangeEvent } from 'react';
-import { useConfig } from '@/app/components/config-context';
+import {
+  useConfig,
+  DEFAULT_CHAT_MODEL,
+  DEFAULT_COMPLETION_MODEL,
+} from '@/app/components/config-context';
 import {
   Select,
   SelectContent,
@@ -18,6 +22,8 @@ import { Switch } from '@/components/ui/switch';
 export function QueryConfigForm() {
   const { completionModel, chatModel, topK, temperature, includeDocs } = useConfig();
   const { setCompletionModel, setChatModel, setTopK, setTemperature, setIncludeDocs } = useConfig();
+  console.log(completionModel);
+  console.log(chatModel);
 
   const sendToast = (key: string, value: string) => {
     return toast({
@@ -39,8 +45,20 @@ export function QueryConfigForm() {
     return;
   };
 
+  const updateConfig = (value: string) => {
+    if (value === 'chat') {
+      setChatModel(DEFAULT_CHAT_MODEL);
+      setCompletionModel('');
+    } else if (value === 'completion') {
+      setCompletionModel(DEFAULT_COMPLETION_MODEL);
+      setChatModel('');
+    } else {
+      throw new Error('Invalid model type');
+    }
+    return;
+  };
   return (
-    <Tabs defaultValue="chat" className="w-full">
+    <Tabs defaultValue="chat" className="w-full" onValueChange={updateConfig}>
       <div className="flex w-full flex-col gap-2">
         <div className="flex w-full items-center justify-between gap-4 pt-2">
           <Label className="w-1/2">Model type</Label>
@@ -58,7 +76,7 @@ export function QueryConfigForm() {
                   setChatModel(e);
                   sendToast('model', e);
                 }}
-                defaultValue={chatModel}
+                value={chatModel}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="select model" />
@@ -78,7 +96,7 @@ export function QueryConfigForm() {
                   setCompletionModel(e);
                   sendToast('model', e);
                 }}
-                defaultValue={completionModel}
+                value={completionModel}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="select model" />
