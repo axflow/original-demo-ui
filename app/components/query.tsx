@@ -56,21 +56,15 @@ export function QueryWidget() {
     });
     const json = await res.json();
     if (json.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error ingesting',
-        description: <p>{json.error}</p>,
-      });
-    } else {
-      if (includeDocs) {
-        // TODO better handling of the response type
-        setResponse(json.response.result.choices[0].message.content);
-      } else {
-        setResponse(json.response.choices[0].message.content);
-      }
+      toast({ variant: 'destructive', title: 'Error ingesting', description: <p>{json.error}</p> });
+      return;
     }
+    const msg = includeDocs
+      ? json.response.result.choices[0].message.content
+      : json.response.choices[0].message.content;
+    setResponse(msg);
   };
-  // TODO add streaming
+
   const completion = async (
     question: string,
     includeDocs: boolean,
@@ -91,18 +85,10 @@ export function QueryWidget() {
     });
     const json = await res.json();
     if (json.error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error ingesting',
-        description: <p>{json.error}</p>,
-      });
-    } else {
-      if (includeDocs) {
-        setResponse(json.response.result);
-      } else {
-        setResponse(json.response);
-      }
+      toast({ variant: 'destructive', title: 'Error ingesting', description: <p>{json.error}</p> });
     }
+    const msg = includeDocs ? json.response.result : json.response;
+    setResponse(msg);
   };
 
   async function onSubmit(data: z.infer<typeof QuerySchema>) {

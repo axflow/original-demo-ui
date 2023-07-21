@@ -40,7 +40,6 @@ export function QueryConfigForm() {
     }
     setTopK(Number(value));
     sendToast('topK', value);
-    return;
   };
 
   const updateConfig = (value: string) => {
@@ -53,8 +52,8 @@ export function QueryConfigForm() {
     } else {
       throw new Error('Invalid model type');
     }
-    return;
   };
+
   return (
     <Tabs defaultValue="chat" className="w-full" onValueChange={updateConfig}>
       <div className="flex w-full flex-col gap-2">
@@ -72,7 +71,7 @@ export function QueryConfigForm() {
               <Select
                 onValueChange={(e) => {
                   setChatModel(e);
-                  sendToast('model', e);
+                  sendToast('chat model', e);
                 }}
                 value={chatModel}
               >
@@ -92,7 +91,7 @@ export function QueryConfigForm() {
               <Select
                 onValueChange={(e) => {
                   setCompletionModel(e);
-                  sendToast('model', e);
+                  sendToast('completion model', e);
                 }}
                 value={completionModel}
               >

@@ -39,7 +39,6 @@ export const chat = async (query: string, model: string, temperature: number) =>
     prompt: new BasicPromptMessage({ template: QUESTION_WITHOUT_CONTEXT }),
   });
 
-  console.log('running chat');
   return completion.run(query);
 };
 
@@ -57,7 +56,6 @@ export const ragChat = async (
     embedder: new OpenAIEmbedder(),
   });
 
-  console.log('running RAG chat');
   return rag.run(question);
 };
 
@@ -73,7 +71,6 @@ export const completion = async (query: string, model: string, temperature: numb
     prompt: new BasicPrompt({ template: QUESTION_WITHOUT_CONTEXT }),
   });
 
-  console.log('running completion');
   return completion.run(query);
 };
 
@@ -93,6 +90,5 @@ export const rag = async (question: string, model: string, topK: number, tempera
     retriever: new Retriever({ store: pinecone, topK }),
   });
 
-  console.log('running RAG completion');
   return rag.run(question);
 };
