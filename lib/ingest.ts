@@ -1,16 +1,20 @@
 import { Ingestion, Wikipedia, TextSplitter, OpenAIEmbedder, TextDocument } from 'axgen';
 import { getChromaStore, getPineconeStore, getOpenAiKey } from './axgen-utils';
 
-const getStore = (store: 'pinecone' | 'chroma') => {
+const getStore = (store: string) => {
   switch (store) {
     case 'pinecone':
       return getPineconeStore();
     case 'chroma':
       return getChromaStore();
+    default:
+      throw new Error(`Unknown store ${store}`);
   }
 };
-export const ingestWikipedia = async (term: string) => {
-  const store = getPineconeStore();
+
+export const ingestWikipedia = async (term: string, storeName: string) => {
+  const store = getStore(storeName);
+
   const ingestion = new Ingestion({
     store,
     source: new Wikipedia({ term }),
@@ -19,8 +23,6 @@ export const ingestWikipedia = async (term: string) => {
   });
 
   await ingestion.run();
-
-  return term;
 };
 
 export const ingestFile = async (

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useConfig } from '@/app/components/config-context';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import {
@@ -19,23 +20,28 @@ import { toast } from '@/components/ui/use-toast';
 
 export function IngestWikipedia() {
   const [loading, setLoading] = useState<boolean>(false);
+  const { store } = useConfig();
+
   const WikipediaFormSchema = z.object({
     term: z.string({
       required_error: 'Please select a term to search wikipedia for',
     }),
   });
+
   const wikipediaForm = useForm<z.infer<typeof WikipediaFormSchema>>({
     resolver: zodResolver(WikipediaFormSchema),
     defaultValues: { term: 'San Francisco' },
   });
+
   async function onSubmitWikipedia(data: z.infer<typeof WikipediaFormSchema>) {
     setLoading(true);
     const response = await fetch('/api/ingest/wikipedia', {
       method: 'POST',
       headers: { 'Content-type': 'application/json' },
-      body: JSON.stringify({ term: data.term }),
+      body: JSON.stringify({ term: data.term, store }),
     });
     const json = await response.json();
+
     if (json.error) {
       toast({
         variant: 'destructive',
@@ -43,6 +49,7 @@ export function IngestWikipedia() {
         description: <p>{json.error}</p>,
       });
     } else {
+      console.log(json);
       toast({
         title: 'Ingested wikipedia page',
         description: <p>{data.term} </p>,
