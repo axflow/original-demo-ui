@@ -108,11 +108,6 @@ export function QueryConfigForm() {
           </TabsContent>
         </div>
 
-        <div className="flex items-center gap-4">
-          <Label className="w-full">Top K</Label>
-          <Input onChange={validateAndSubmitTopK} value={topK} />
-        </div>
-
         <div className="flex items-center gap-4 py-2">
           <Label className="w-full">Temperature</Label>
           <p className="pl-4">{temperature}</p>
@@ -137,6 +132,13 @@ export function QueryConfigForm() {
             }}
           />
         </div>
+
+        {includeDocs && (
+          <div className="transition-200 flex items-center gap-4">
+            <Label className="w-full">Top K</Label>
+            <Input onChange={validateAndSubmitTopK} value={topK} />
+          </div>
+        )}
       </div>
     </Tabs>
   );
