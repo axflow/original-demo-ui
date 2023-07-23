@@ -27,6 +27,7 @@ export function IngestDocumentUpload() {
     const formData = new FormData();
     formData.append('file', firstDoc);
     formData.append('store', store);
+    formData.append('filename', firstDoc.name);
 
     const response = await window.fetch('/api/ingest/upload', {
       method: 'POST',
