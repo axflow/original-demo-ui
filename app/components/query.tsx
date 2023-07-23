@@ -24,7 +24,8 @@ export function QueryWidget() {
   const [response, setResponse] = useState<string>('');
   const [querying, setQuerying] = useState<boolean>(false);
   const [docs, setDocs] = useState<Array<ContextDocument>>([]);
-  const { topK, temperature, completionModel, chatModel, includeDocs } = useConfig();
+  const { topK, temperature, completionModel, chatModel, includeDocs, store, maxTokens } =
+    useConfig();
 
   const QuerySchema = z.object({
     prompt: z
@@ -39,13 +40,7 @@ export function QueryWidget() {
     resolver: zodResolver(QuerySchema),
   });
 
-  const chat = async (
-    question: string,
-    includeDocs: boolean,
-    topK: number,
-    temperature: number,
-    model: string
-  ) => {
+  const chat = async (question: string) => {
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({
@@ -54,9 +49,12 @@ export function QueryWidget() {
         llmOnly: !includeDocs,
         topK,
         temperature,
-        model,
+        model: chatModel,
+        store,
+        maxTokens,
       }),
     });
+
     const json = await res.json();
     if (json.error) {
       toast({ variant: 'destructive', title: 'Error ingesting', description: <p>{json.error}</p> });
@@ -70,16 +68,9 @@ export function QueryWidget() {
     // Update the docs object
     const docObjects = json.response.context;
     setDocs(docObjects);
-    console.log(docObjects);
   };
 
-  const completion = async (
-    question: string,
-    includeDocs: boolean,
-    topK: number,
-    temperature: number,
-    model: string
-  ) => {
+  const completion = async (question: string) => {
     const res = await fetch('/api/query', {
       method: 'POST',
       body: JSON.stringify({
@@ -88,20 +79,23 @@ export function QueryWidget() {
         llmOnly: !includeDocs,
         topK,
         temperature,
-        model,
+        model: completionModel,
+        store,
+        maxTokens,
       }),
     });
+
     const json = await res.json();
     if (json.error) {
       toast({ variant: 'destructive', title: 'Error ingesting', description: <p>{json.error}</p> });
     }
+
     const msg = includeDocs ? json.response.result : json.response;
     setResponse(msg);
 
     // Update the docs object
     const docObjects = json.response.context;
     setDocs(docObjects);
-    console.log(docObjects);
   };
 
   async function onSubmit(data: z.infer<typeof QuerySchema>) {
@@ -109,9 +103,9 @@ export function QueryWidget() {
     setResponse('');
     setDocs([]);
     if (completionModel) {
-      await completion(data.prompt, includeDocs, topK, temperature, completionModel);
+      await completion(data.prompt);
     } else if (chatModel) {
-      await chat(data.prompt, includeDocs, topK, temperature, chatModel);
+      await chat(data.prompt);
     } else {
       toast({ title: 'Error', description: 'Something went wrong', variant: 'destructive' });
     }

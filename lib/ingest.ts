@@ -1,7 +1,7 @@
 import { Ingestion, Wikipedia, TextSplitter, OpenAIEmbedder, TextDocument } from 'axgen';
 import { getChromaStore, getPineconeStore, getOpenAiKey } from './axgen-utils';
 
-const getStore = (store: string) => {
+export const getStore = (store: string) => {
   switch (store) {
     case 'pinecone':
       return getPineconeStore();

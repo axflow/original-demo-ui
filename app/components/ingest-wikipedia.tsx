@@ -49,7 +49,6 @@ export function IngestWikipedia() {
         description: <p>{json.error}</p>,
       });
     } else {
-      console.log(json);
       toast({
         title: 'Ingested wikipedia page',
         description: <p>{data.term} </p>,

@@ -2,15 +2,32 @@ import { NextRequest, NextResponse } from 'next/server';
 import { queryCompletion, queryChat } from '@/lib/query';
 
 export async function POST(request: NextRequest) {
-  const { modelType, question, llmOnly, topK, model, temperature } = await request.json();
+  const { modelType, question, llmOnly, topK, model, temperature, maxTokens, store } =
+    await request.json();
   try {
     let response;
     switch (modelType) {
       case 'completion':
-        response = await queryCompletion({ query: question, model, llmOnly, topK, temperature });
+        response = await queryCompletion({
+          query: question,
+          model,
+          store,
+          llmOnly,
+          topK,
+          temperature,
+          maxTokens,
+        });
         break;
       case 'chat':
-        response = await queryChat({ query: question, model, llmOnly, topK, temperature });
+        response = await queryChat({
+          query: question,
+          model,
+          llmOnly,
+          topK,
+          temperature,
+          store,
+          maxTokens,
+        });
         break;
       default:
         return NextResponse.json({ error: 'Invalid model type' }, { status: 400 });

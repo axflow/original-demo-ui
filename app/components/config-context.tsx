@@ -17,6 +17,8 @@ export interface ConfigInterface {
   includeDocs: boolean;
   setIncludeDocs: (includeDocs: boolean) => void;
   dimensions: number;
+  maxTokens: number;
+  setMaxTokens: (maxTokens: number) => void;
 }
 
 const notImplemented = () => {
@@ -43,6 +45,8 @@ const ConfigContext = createContext<ConfigInterface>({
   includeDocs: true,
   setIncludeDocs: notImplemented,
   dimensions: 1536,
+  maxTokens: 256,
+  setMaxTokens: notImplemented,
 });
 
 export const useConfig = () => {
@@ -57,6 +61,7 @@ export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Eleme
   const [store, setStore] = useState<string>('pinecone');
   const [embeddingModel, setEmbeddingModel] = useState<string>('text-embedding-ada-002');
   const [includeDocs, setIncludeDocs] = useState<boolean>(true);
+  const [maxTokens, setMaxTokens] = useState<number>(256);
 
   const context: ConfigInterface = {
     completionModel: completionModel,
@@ -75,6 +80,8 @@ export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Eleme
     setIncludeDocs,
     // This is fixed.
     dimensions: 1536,
+    maxTokens,
+    setMaxTokens,
   };
 
   return <ConfigContext.Provider value={context}>{children}</ConfigContext.Provider>;

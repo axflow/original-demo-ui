@@ -20,8 +20,15 @@ import { toast } from '@/components/ui/use-toast';
 import { Switch } from '@/components/ui/switch';
 
 export function QueryConfigForm() {
-  const { completionModel, chatModel, topK, temperature, includeDocs } = useConfig();
-  const { setCompletionModel, setChatModel, setTopK, setTemperature, setIncludeDocs } = useConfig();
+  const { completionModel, chatModel, topK, temperature, includeDocs, maxTokens } = useConfig();
+  const {
+    setCompletionModel,
+    setChatModel,
+    setTopK,
+    setTemperature,
+    setIncludeDocs,
+    setMaxTokens,
+  } = useConfig();
 
   const sendToast = (key: string, value: string) => {
     return toast({
@@ -40,6 +47,18 @@ export function QueryConfigForm() {
     }
     setTopK(Number(value));
     sendToast('topK', value);
+  };
+
+  const validateAndSubmitMaxTokens = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (isNaN(Number(value))) {
+      return;
+    }
+    if (Number(value) < 0 || Number(value) > 1000) {
+      return;
+    }
+    setMaxTokens(Number(value));
+    sendToast('maxTokens', value);
   };
 
   const updateConfig = (value: string) => {
@@ -106,6 +125,11 @@ export function QueryConfigForm() {
               </Select>
             </div>
           </TabsContent>
+        </div>
+
+        <div className="flex items-center gap-4 py-2">
+          <Label className="w-full">Max tokens</Label>
+          <Input onChange={validateAndSubmitMaxTokens} value={maxTokens} />
         </div>
 
         <div className="flex items-center gap-4 py-2">
