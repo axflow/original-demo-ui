@@ -98,3 +98,39 @@ export const rag = async (opts: QueryOptions) => {
 
   return rag.run(opts.query);
 };
+
+export async function queryCompletionStream(opts: QueryOptions) {
+  return opts.llmOnly ? completionStream(opts) : ragStream(opts);
+}
+
+export const completionStream = async (opts: QueryOptions) => {
+  const completion = new Completion({
+    model: new OpenAICompletion({
+      model: opts.model,
+      max_tokens: opts.maxTokens,
+      temperature: opts.temperature,
+    }),
+    prompt: new BasicPrompt({ template: QUESTION_WITHOUT_CONTEXT }),
+  });
+
+  return completion.stream(opts.query);
+};
+
+export const ragStream = async (opts: QueryOptions) => {
+  const store = getStore(opts.store);
+
+  const rag = new RAG({
+    model: new OpenAICompletion({
+      model: opts.model,
+      max_tokens: opts.maxTokens,
+      apiKey: getOpenAiKey(),
+      temperature: opts.temperature,
+    }),
+    prompt: new PromptWithContext({ template: QUESTION_WITH_CONTEXT }),
+    embedder: new OpenAIEmbedder({ apiKey: getOpenAiKey() }),
+    // Parameterize me!
+    retriever: new Retriever({ store, topK: opts.topK }),
+  });
+
+  return rag.run(opts.query);
+};
