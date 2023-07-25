@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { queryChatStream, queryCompletionStream } from 'lib/query';
 // Separators recommended from
 // https://stackoverflow.com/questions/6319551/whats-the-best-separator-delimiter-characters-for-a-plaintext-db-file
-const JSON_SEPARATOR_CODE_POINT = parseInt('1d', 16);
-const CONTENT_SEPARATOR_CODE_POINT = parseInt('1e', 16);
+const JSON_STREAM_SEPARATOR = Uint8Array.from([0x1d]);
+const CONTENT_STREAM_SEPARATOR = Uint8Array.from([0x1e]);
 
 type ChatResponse = {
   choices: Array<{
@@ -14,28 +14,24 @@ type ChatResponse = {
 };
 
 type InfoContext = {
-  context: Array<object>;
+  context?: Array<object>;
 };
 
-function iterableToStream(
-  iterable: AsyncIterable<string | ChatResponse>,
-  info: InfoContext,
-  isChat: boolean
-) {
+function iterableToStream(iterable: AsyncIterable<string | ChatResponse>, info: InfoContext) {
   const encoder = new TextEncoder();
   return new ReadableStream({
     async pull(controller) {
       for await (const value of iterable) {
-        const chunk = isChat ? (value as ChatResponse).choices[0].delta.content : value;
-        controller.enqueue(encoder.encode(chunk as string));
+        const chunk = typeof value === 'string' ? value : value.choices[0].delta.content;
+        controller.enqueue(encoder.encode(chunk));
       }
 
-      controller.enqueue(new Uint8Array([CONTENT_SEPARATOR_CODE_POINT]));
+      controller.enqueue(CONTENT_STREAM_SEPARATOR);
       const documents = info.context;
       if (documents) {
         for (const document of documents) {
           controller.enqueue(encoder.encode(JSON.stringify(document)));
-          controller.enqueue(new Uint8Array([JSON_SEPARATOR_CODE_POINT]));
+          controller.enqueue(JSON_STREAM_SEPARATOR);
         }
       }
 
@@ -65,7 +61,7 @@ export async function handleCompletion(body: RequestBody) {
     maxTokens,
     topK,
   });
-  const stream = iterableToStream(iterable, info, false);
+  const stream = iterableToStream(iterable, info);
   return new Response(stream);
 }
 
@@ -80,7 +76,7 @@ export async function handleChat(body: RequestBody) {
     maxTokens,
     topK,
   });
-  const stream = iterableToStream(iterable, info, true);
+  const stream = iterableToStream(iterable, info);
   return new Response(stream);
 }
 
