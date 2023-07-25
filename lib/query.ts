@@ -99,11 +99,11 @@ export const rag = async (opts: QueryOptions) => {
   return rag.run(opts.query);
 };
 
-export async function queryCompletionStream(opts: QueryOptions) {
+export function queryCompletionStream(opts: QueryOptions) {
   return opts.llmOnly ? completionStream(opts) : ragStream(opts);
 }
 
-export const completionStream = async (opts: QueryOptions) => {
+export const completionStream = (opts: QueryOptions) => {
   const completion = new Completion({
     model: new OpenAICompletion({
       model: opts.model,
@@ -113,10 +113,10 @@ export const completionStream = async (opts: QueryOptions) => {
     prompt: new BasicPrompt({ template: QUESTION_WITHOUT_CONTEXT }),
   });
 
-  return completion.stream(opts.query);
+  return { result: completion.stream(opts.query) };
 };
 
-export const ragStream = async (opts: QueryOptions) => {
+export const ragStream = (opts: QueryOptions) => {
   const store = getStore(opts.store);
 
   const rag = new RAG({
@@ -132,5 +132,5 @@ export const ragStream = async (opts: QueryOptions) => {
     retriever: new Retriever({ store, topK: opts.topK }),
   });
 
-  return rag.run(opts.query);
+  return rag.stream(opts.query);
 };

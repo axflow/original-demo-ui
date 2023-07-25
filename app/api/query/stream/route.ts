@@ -1,16 +1,13 @@
-export const runtime = 'edge'; // 'nodejs' is the default
 import { queryCompletionStream } from 'lib/query';
 
-function iteratorToStream(iterator: any) {
+function iterableToStream(iterable: AsyncIterable<string>) {
+  const encoder = new TextEncoder();
   return new ReadableStream({
     async pull(controller) {
-      const { value, done } = await iterator.next();
-
-      if (done) {
-        controller.close();
-      } else {
-        controller.enqueue(value);
+      for await (const value of iterable) {
+        controller.enqueue(encoder.encode(value));
       }
+      controller.close();
     },
   });
 }
@@ -20,7 +17,7 @@ function iteratorToStream(iterator: any) {
 //     setTimeout(resolve, time);
 //   });
 // }
-//
+
 // const encoder = new TextEncoder();
 
 // async function* makeIterator() {
@@ -33,16 +30,18 @@ function iteratorToStream(iterator: any) {
 
 export async function GET() {
   const query = 'What is the weather like in SF?';
-  const result = await queryCompletionStream({
+
+  const { result: iterable } = queryCompletionStream({
     query,
     model: 'text-davinci-003',
     store: 'pinecone',
-    llmOnly: true,
+    llmOnly: false,
     temperature: 0,
     maxTokens: 256,
     topK: 1,
   });
-  const stream = iteratorToStream(result);
+
+  const stream = iterableToStream(iterable);
 
   return new Response(stream);
 }
