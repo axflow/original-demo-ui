@@ -17,8 +17,10 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { toast } from '@/components/ui/use-toast';
 import DocumentCard from '@/app/components/document-card';
+
+const JSON_SEPARATOR_CODE_POINT = String.fromCharCode(parseInt('1d', 16));
+const CONTENT_SEPARATOR_CODE_POINT = String.fromCharCode(parseInt('1e', 16));
 
 export function QueryWidget() {
   const [response, setResponse] = useState<string>('');
@@ -40,75 +42,59 @@ export function QueryWidget() {
     resolver: zodResolver(QuerySchema),
   });
 
-  const chat = async (question: string) => {
-    const res = await fetch('/api/query', {
-      method: 'POST',
-      body: JSON.stringify({
-        modelType: 'chat',
-        question,
-        llmOnly: !includeDocs,
-        topK,
-        temperature,
-        model: chatModel,
-        store,
-        maxTokens,
-      }),
-    });
-
-    const json = await res.json();
-    if (json.error) {
-      toast({ variant: 'destructive', title: 'Error ingesting', description: <p>{json.error}</p> });
-      return;
-    }
-    const msg = includeDocs
-      ? json.response.result.choices[0].message.content
-      : json.response.choices[0].message.content;
-    setResponse(msg);
-
-    // Update the docs object
-    const docObjects = json.response.context;
-    setDocs(docObjects);
-  };
-
-  const completion = async (question: string) => {
-    const res = await fetch('/api/query', {
-      method: 'POST',
-      body: JSON.stringify({
-        modelType: 'completion',
-        question,
-        llmOnly: !includeDocs,
-        topK,
-        temperature,
-        model: completionModel,
-        store,
-        maxTokens,
-      }),
-    });
-
-    const json = await res.json();
-    if (json.error) {
-      toast({ variant: 'destructive', title: 'Error ingesting', description: <p>{json.error}</p> });
-    }
-
-    const msg = includeDocs ? json.response.result : json.response;
-    setResponse(msg);
-
-    // Update the docs object
-    const docObjects = json.response.context;
-    setDocs(docObjects);
-  };
-
   async function onSubmit(data: z.infer<typeof QuerySchema>) {
     setQuerying(true);
     setResponse('');
     setDocs([]);
-    if (completionModel) {
-      await completion(data.prompt);
-    } else if (chatModel) {
-      await chat(data.prompt);
-    } else {
-      toast({ title: 'Error', description: 'Something went wrong', variant: 'destructive' });
+
+    const modelType = chatModel ? 'chat' : 'completion';
+    const res = await fetch('/api/query/stream', {
+      method: 'POST',
+      body: JSON.stringify({
+        modelType: modelType,
+        question: data.prompt,
+        llmOnly: !includeDocs,
+        topK,
+        temperature,
+        model: modelType === 'chat' ? chatModel : completionModel,
+        store,
+        maxTokens,
+      }),
+    });
+
+    if (!res?.body) {
+      return;
     }
+
+    const reader = res.body.getReader();
+    const chunks = [];
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        const finishedChunks = new Uint8Array(
+          ([] as number[]).concat(...chunks.map((chunk) => Array.from(chunk)))
+        );
+        const decodedData = new TextDecoder().decode(finishedChunks);
+        const chainedDocuments = decodedData.split(CONTENT_SEPARATOR_CODE_POINT)[1];
+        const documents = chainedDocuments.split(JSON_SEPARATOR_CODE_POINT);
+
+        setDocs(documents.filter((doc) => doc).map((doc) => JSON.parse(doc)));
+        break;
+      }
+
+      chunks.push(value);
+      const concatenatedChunks = new Uint8Array(
+        ([] as number[]).concat(...chunks.map((chunk) => Array.from(chunk)))
+      );
+
+      const decodedData = new TextDecoder().decode(concatenatedChunks);
+      const text = decodedData.split(CONTENT_SEPARATOR_CODE_POINT)[0];
+
+      setResponse(text);
+    }
+
     setQuerying(false);
   }
 

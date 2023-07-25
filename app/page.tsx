@@ -6,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IngestWikipedia } from '@/app/components/ingest-wikipedia';
 import { IngestDocumentUpload } from '@/app/components/ingest-upload';
 import { QueryWidget } from '@/app/components/query';
-import { StreamQueryBox } from '@/app/components/stream-query';
 
 function IngestTab() {
   const router = useRouter();
@@ -37,12 +36,7 @@ function QueryTab() {
     router.push(pathname + '?tab=query');
   }, [router, pathname]);
 
-  return (
-    <>
-      <QueryWidget />
-      <StreamQueryBox />
-    </>
-  );
+  return <QueryWidget />;
 }
 
 export default function IndexPage() {
