@@ -10,7 +10,6 @@ export async function POST(request: NextRequest) {
   const file = formData.get('file');
   const storeName = formData.get('store');
   const filename = formData.get('filename');
-  console.log(filename);
 
   if (['pinecone', 'chroma'].includes(storeName as string) === false) {
     return NextResponse.json({ error: 'Invalid store name' }, { status: 400 });
