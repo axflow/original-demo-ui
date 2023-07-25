@@ -146,7 +146,7 @@ export function QueryConfigForm() {
         </div>
 
         <div className="flex items-center gap-4 py-2">
-          <Label className="w-full">Include documents</Label>
+          <Label className="w-full">Include document chunks</Label>
           <p className="px-4">{includeDocs}</p>
           <Switch
             checked={includeDocs}
@@ -159,7 +159,7 @@ export function QueryConfigForm() {
 
         {includeDocs && (
           <div className="transition-200 flex items-center gap-4">
-            <Label className="w-full">Top K</Label>
+            <Label className="w-full">Number of chunks</Label>
             <Input onChange={validateAndSubmitTopK} value={topK} />
           </div>
         )}

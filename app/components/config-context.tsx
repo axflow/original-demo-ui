@@ -36,7 +36,7 @@ const ConfigContext = createContext<ConfigInterface>({
   setChatModel: notImplemented,
   temperature: 0,
   setTemperature: notImplemented,
-  topK: 3,
+  topK: 2,
   setTopK: notImplemented,
   store: 'pinecone',
   setStore: notImplemented,
@@ -45,7 +45,7 @@ const ConfigContext = createContext<ConfigInterface>({
   includeDocs: true,
   setIncludeDocs: notImplemented,
   dimensions: 1536,
-  maxTokens: 256,
+  maxTokens: 150,
   setMaxTokens: notImplemented,
 });
 
@@ -57,11 +57,11 @@ export const ConfigProvider = ({ children }: { children: ReactNode }): JSX.Eleme
   const [completionModel, setCompletionModel] = useState<string>('');
   const [chatModel, setChatModel] = useState<string>(DEFAULT_CHAT_MODEL);
   const [temperature, setTemperature] = useState<number>(0);
-  const [topK, setTopK] = useState<number>(3);
+  const [topK, setTopK] = useState<number>(2);
   const [store, setStore] = useState<string>('pinecone');
   const [embeddingModel, setEmbeddingModel] = useState<string>('text-embedding-ada-002');
   const [includeDocs, setIncludeDocs] = useState<boolean>(true);
-  const [maxTokens, setMaxTokens] = useState<number>(256);
+  const [maxTokens, setMaxTokens] = useState<number>(150);
 
   const context: ConfigInterface = {
     completionModel: completionModel,
