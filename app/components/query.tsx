@@ -118,10 +118,12 @@ export function QueryWidget() {
                         <Textarea placeholder="Ask your data a question" {...field} rows={4} />
                       </FormControl>
                     </div>
-                    <FormDescription>
-                      The system will fetch relevant document chunks, pass them to the query context
-                      and return the LLM&rsquo;s response.
-                    </FormDescription>
+                    {includeDocs && (
+                      <FormDescription>
+                        The system will fetch relevant document chunks, pass them to the query
+                        context and return the LLM&rsquo;s response.
+                      </FormDescription>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
