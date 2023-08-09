@@ -78,9 +78,9 @@ export function QueryWidget() {
         );
         const decodedData = new TextDecoder().decode(finishedChunks);
         const chainedDocuments = decodedData.split(CONTENT_SEPARATOR_CODE_POINT)[1];
-        const documents = chainedDocuments.split(JSON_SEPARATOR_CODE_POINT);
+        const documents = chainedDocuments?.split(JSON_SEPARATOR_CODE_POINT);
 
-        setDocs(documents.filter((doc) => doc).map((doc) => JSON.parse(doc)));
+        setDocs(documents?.filter((doc) => doc).map((doc) => JSON.parse(doc)));
         break;
       }
 
