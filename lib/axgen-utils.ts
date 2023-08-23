@@ -1,4 +1,4 @@
-import { Pinecone, Chroma } from 'axgen';
+import { Pinecone, PgVector } from 'axgen';
 import { getEnvOrThrow } from './utils';
 
 export const getPineconeStore = () => {
@@ -10,10 +10,10 @@ export const getPineconeStore = () => {
   });
 };
 
-export const getChromaStore = () => {
-  return new Chroma({
-    path: getEnvOrThrow('CHROMA_PATH'),
-    collection: getEnvOrThrow('CHROMA_COLLECTION'),
+export const getPgVectorStore = () => {
+  return new PgVector({
+    dsn: 'postgresql://localhost/axilla-demo',
+    tableName: 'vectors',
   });
 };
 

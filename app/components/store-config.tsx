@@ -11,28 +11,28 @@ import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/components/ui/use-toast';
-import type { ChromaStore, PineconeStore } from '@/types/store';
+import type { PgVectorStore, PineconeStore } from '@/types/store';
 
-export function ChromaStoreConfigForm() {
+export function PgVectorConfigForm() {
   // This is pretty hard coded and read-only
   // It would be nice to improve modularity
-  const defaultChromaStore = {
-    name: 'chroma',
-    collection: 'vectors',
-    url: 'http://localhost:8000',
-  } as ChromaStore;
+  const defaultPgVector = {
+    name: 'pgvector',
+    tableName: 'vectors',
+    dsn: 'postgresql://localhost/axilla-demo',
+  } as PgVectorStore;
 
   return (
     <div>
       <Table>
         <TableBody>
           <TableRow>
-            <TableCell className="font-medium">collection</TableCell>
-            <TableCell>{defaultChromaStore.collection}</TableCell>
+            <TableCell className="font-medium">table name</TableCell>
+            <TableCell>{defaultPgVector.tableName}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="font-medium">url</TableCell>
-            <TableCell>{defaultChromaStore.url}</TableCell>
+            <TableCell>{defaultPgVector.dsn}</TableCell>
           </TableRow>
         </TableBody>
       </Table>
@@ -108,12 +108,12 @@ export function VectorStoreWidget() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="pinecone">pinecone</SelectItem>
-            <SelectItem value="chroma">chroma</SelectItem>
+            <SelectItem value="pgvector">pgvector</SelectItem>
           </SelectContent>
         </Select>
       </div>
       {store === 'pinecone' && <PineconeStoreConfigForm />}
-      {store === 'chroma' && <ChromaStoreConfigForm />}
+      {store === 'pgvector' && <PgVectorConfigForm />}
     </div>
   );
 }

@@ -6,10 +6,10 @@ export type PineconeStore = {
   namespace: string;
 };
 
-export type ChromaStore = {
-  name: 'chroma';
-  collection: string;
-  url: string;
+export type PgVectorStore = {
+  name: 'pgvector';
+  tableName: string;
+  dsn: string;
 };
 
-export type SupportedStore = PineconeStore | ChromaStore;
+export type SupportedStore = PineconeStore | PgVectorStore;
